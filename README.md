@@ -26,7 +26,7 @@ Total Points | First Squre | Second Squre
 2 | Grass | Fence/Crater/Unknown
 1 | Empty | Grass
 1 | Empty | Empty
--1 | Fence/Crater/Unknown | Empty/Grass
+1 | Fence/Crater/Unknown | Empty/Grass
     2. Depending on which direction gets the higest points we can decide the direction to turn the mower.
     3. _An Enhancement can be made here if the map has information about the surouding squares on the destination, we can pick the direction it will turn too. We will need to que it here so that the mower will remember to include in its next turn._ 
 4. If none of grass locations can be accessible, then the following actions can be done:
