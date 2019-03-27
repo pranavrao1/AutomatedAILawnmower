@@ -27,6 +27,7 @@ The algorithm for each mower to determine what action to perform each turn.
     3. Run validation to ensure random direction and move are correct with mower map.
 
 Table 1: Points for each Grass Square.
+
 Total Points | First Squre | Second Squre
 ------------ | ------------- | -------------
 3 | Grass | Grass
