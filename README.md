@@ -17,8 +17,16 @@ The algorithm for each mower to determine what action to perform each turn.
     1. It will them move two or one step in the currect direction.
     2. _An Enhancement can be made here if the map has information about the surouding squares on the destination, we can pick the direction it will turn too._
 3. The mower will now check to see if the remaining seven adjacent sides have any green grass.
-    1. It will also check one square over if the information is available. This is how we will assign priority of which side needs to be mowed first:
-   
+    1. It will also check one square over if the information is available. This is how we will assign priority of which side needs to be mowed first is listed below.
+    2. Depending on which direction gets the higest points we can decide the direction to turn the mower.
+    3. _An Enhancement can be made here if the map has information about the surouding squares on the destination, we can pick the direction it will turn too. We will need to que it here so that the mower will remember to include in its next turn._ 
+4. If none of grass locations can be accessible, then the following actions can be done:
+    1. Check to see if map is fenced off and all grass is mowed.
+        1. Then turn off all mower.
+    2. If not pick random direction by removing all frence, creater and other mower squares.
+    3. Run validation to ensure random direction and move are correct with mower map.
+
+Table 1: Points for each Grass Square.
 Total Points | First Squre | Second Squre
 ------------ | ------------- | -------------
 3 | Grass | Grass
@@ -27,10 +35,3 @@ Total Points | First Squre | Second Squre
 1 | Empty | Grass
 1 | Empty | Empty
 1 | Fence/Crater/Unknown | Empty/Grass
-    2. Depending on which direction gets the higest points we can decide the direction to turn the mower.
-    3. _An Enhancement can be made here if the map has information about the surouding squares on the destination, we can pick the direction it will turn too. We will need to que it here so that the mower will remember to include in its next turn._ 
-4. If none of grass locations can be accessible, then the following actions can be done:
-    1. Check to see if map is fenced off and all grass is mowed.
-        1. Then turn off all mower.
-    2. If not pick random direction by removing all frence, creater and other mower squares.
-    3. Run validation to ensure random direction and move are correct with mower map.
