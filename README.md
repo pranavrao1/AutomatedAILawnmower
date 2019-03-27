@@ -34,5 +34,5 @@ Total Points | First Squre | Second Squre
 2 | Grass | Empty
 2 | Grass | Fence/Crater/Unknown
 1 | Empty | Grass
-1 | Empty | Empty
-1 | Fence/Crater/Unknown | Empty/Grass
+0 | Empty | Empty
+-1 | Fence/Crater/Unknown | Empty/Grass
