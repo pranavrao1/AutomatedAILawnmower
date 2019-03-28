@@ -13,17 +13,17 @@ jar cfe osmowsis.jar Main *.class
 The algorithm for each mower to determine what action to perform each turn.
 # algorithm as discussed on March 27
 1. if MOWING_DONE
-  1. turn_off()
+    1. turn_off()
 2. else if nearbysquare(UNKNOWN_CODE)
-  1. scan()
+    1. scan()
 3. else // move
-  1. move max number of the steps possible where in current direction. (This is probably need some improvement)
-    1. Ignore puppies, if found in current turn.
-  2. On the new spot,
-    1. if surrounded by any green
-      1. pick a green square randomly as direction.
-    2. else
-      1. pick a safe square randomly as direction.
+    1. move max number of the steps possible where in current direction. (This is probably need some improvement)
+        1. Ignore puppies, if found in current turn.
+    2. On the new spot,
+        1. if surrounded by any green
+            1. pick a green square randomly as direction.
+        2. else
+            1. pick a safe square randomly as direction.
       
 End of all mowers turn:
   Remove puppies from the map
