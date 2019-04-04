@@ -1,21 +1,23 @@
 public class Main {
 
     public static void main(String[] args) {
-        SimDriver monitorSim = new SimDriver();
+        SimMonitor monitor = new SimMonitor();
 
         // check for the test scenario file name
         if (args.length == 0) {
             System.out.println("ERROR: Test scenario file name not found.");
         } else {
-            monitorSim.uploadStartingFile(args[0]);
+            monitor.uploadStartingFile(args[0]);
             //monitorSim.renderLawn();
 
             // run the simulation for a fixed number of steps
             int turns = 0;
-            for(; turns < 100 & !monitorSim.allGrassMowed(); turns++) {
-                monitorSim.pollMowerForAction();
-                monitorSim.validateMowerAction();
-                monitorSim.displayActionAndResponses();
+            for(; turns < 100 & !monitor.stopRun(); turns++) {
+                monitor.pollMowerForAction();
+                monitor.validateMowerAction();
+                monitor.getPuppyAction();
+                
+                monitor.displayActionAndResponses();
 
                 // REMEMBER to delete or comment out the rendering before submission
                 // monitorSim.renderLawn();
