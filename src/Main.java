@@ -32,7 +32,7 @@ public class Main {
                 }
             }
             //monitorSim.renderLawn();
-            monitorSim.printFinal(turns);
+            monitor.printFinal(turns);
         }
     }
 

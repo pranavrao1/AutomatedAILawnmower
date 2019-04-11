@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package osmowsis;
 import java.util.Scanner;
 import java.util.HashMap;
 import java.util.Random;
@@ -12,16 +11,11 @@ import java.io.*;
  *
  * @author oscarc
  */
-class Move
-{ 
-    public String direction;  
-    public int    step; 
- };
 
 public class SimMonitor {
     private static Random randGenerator;
-    private Mower[] m_mower;
-    private Puppy[] m_puppy;
+    private Mower[] m_mowers;
+    private Puppy[] m_puppies;
 
     private static final int DEFAULT_WIDTH = 15;
     private static final int DEFAULT_HEIGHT = 10;
@@ -176,25 +170,31 @@ public class SimMonitor {
     public void pollMowerForAction() {
         //int moveRandomChoice;
         ++m_turn;
-        trackAction = m_mower.getNextAction();
+        for (Mower mower: m_mowers) {
+            singleMower(mower);
+        }
+    }
+
+    private void singleMower(Mower mower) {
+        trackAction = mower.getNextAction();
         //moveRandomChoice = randGenerator.nextInt(100);
         if (trackAction.equals("turn_off")) {
             // select turning off the mower as the action
             trackAction = "turn_off";
-        } 
+        }
         //else if (moveRandomChoice < 10) {
         else if (trackAction.equals("scan") ){
             // select scanning as the action
             trackAction = "scan";
             scanSurrounding();
-        } 
+        }
         else {
             // select moving forward and the turning as the action
             trackAction = "move";
-            Move move = m_mower.getMove();
-            trackMoveDistance = move.step;
-            trackNewDirection = move.direction;
-            m_mower.finishMove();
+            Move move = mower.getMove();
+            trackMoveDistance = move.getStep();
+            trackNewDirection = move.getDirection();
+            mower.finishMove();
             // determine a distance
     /*        moveRandomChoice = randGenerator.nextInt(100);
             if (moveRandomChoice < 20) {
@@ -245,11 +245,28 @@ public class SimMonitor {
 
     public void validateMowerAction() {
         int xOrientation, yOrientation;
+        for (Mower mower: m_mowers) {
+            validateSingleMowerAction(mower);
+        }
+    }
 
+    //TODO: Implement this method.
+    public void getPuppyAction() {
+
+    }
+
+    //TODO: Implement this method.
+    public void printFinal(int number) {
+
+    }
+
+    private void validateSingleMowerAction(Mower mower) {
+        int xOrientation;
+        int yOrientation;
         if (trackAction.equals("scan")) {
             // in the case of a scan, return the information for the eight surrounding squares
             // always use a northbound orientation
-            m_mower.provideScanResult(m_scanResult);
+            mower.provideScanResult(m_scanResult);
             //trackScanResults = "empty,grass,crater,fence,empty,grass,crater,fence";
             trackScanResults = SCAN_MAP.get(m_scanResult[0]) + "," +
                     SCAN_MAP.get(m_scanResult[1]) + "," +
@@ -262,8 +279,8 @@ public class SimMonitor {
 
         } else if (trackAction.equals("move")) {
             // in the case of a move, ensure that the move doesn't cross craters or fences
-            
-             
+
+
             xOrientation = xDIR_MAP.get(mowerDirection);
             yOrientation = yDIR_MAP.get(mowerDirection);
 
@@ -290,7 +307,7 @@ public class SimMonitor {
             trackMoveCheck = "ok";
         }
     }
-    
+
     public void scanSurrounding(){
         
         for(int i=0; i<8; ++i)
@@ -475,6 +492,12 @@ public class SimMonitor {
         // display the mower's direction
         System.out.println("dir: " + mowerDirection);
         System.out.println("");
+    }
+
+
+    //TODO: Implement Stop run
+    public boolean stopRun() {
+        return false;
     }
 
 }
