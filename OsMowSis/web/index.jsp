@@ -1,10 +1,26 @@
+
+<%@page import="sun.misc.IOUtils"%>
+<%@page import="java.nio.file.StandardCopyOption"%>
+<%@page import="Backend.Simulator"%>
+<%@ page import="java.io.*"%>
 <html>
 <head>
 <title>A6-60 OsMowSis</title>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body bgcolor=white>
-
+    
+<%        
+    String saveFile = "";
+    String contentType = request.getContentType();
+    String map = "";
+    if ((contentType != null) && (contentType.indexOf("multipart/form-data") >= 0)) {
+        Simulator monitorSim = new Simulator();
+        map = monitorSim.uploadStartingFile(request.getInputStream());
+        
+    }
+    
+%>
 <table class="borderline centered" style="width: 1200px; height: 800px;">
 <tr style="height: 40px;">
     <td colspan="2">
@@ -15,9 +31,9 @@
 </tr>
 <tr>
     <td>
-            <form action = "UploadServlet" method = "post" enctype = "multipart/form-data" style="margin: 0; margin-left: 20px; margin-top: 20px; height:30px;">
-                <input style="width:600px" class="borderline" type = "file" name = "file" size = "50"/>
-                <input type = "submit" value = "Import" />
+            <form ENCTYPE="multipart/form-data" action="#" method="post" style="margin: 0; margin-left: 20px; margin-top: 20px; height:30px;">
+                <input name="path" style="width:600px" class="borderline" type ="file" size = "50"/>
+                <input id="sendMailBtn" type = "submit" value = "Import"/>
             </form>
     </td>
     <td>
@@ -32,7 +48,7 @@
                     <table style="width:780px; height:700px; border: 1px solid #aaaaaa;">
                         <tr>
                             <td>
-                                
+                                <% out.print(map); %>
                             </td>
                         </tr>
                     </table>
