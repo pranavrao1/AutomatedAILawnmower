@@ -113,12 +113,8 @@ public class SimMonitor {
                 y = Integer.parseInt(tokens[1]);
                 m_lawnInfo[x][y] = code.EMPTY_CODE;
                 
-                m_mowerState[k].setX(x);
-                m_mowerState[k].setX(y);
-                m_mowerState[k].setDirection(mowerDirection);
-                
-                // TODO m_mowers[k].Mower();
-
+                m_mowerState[k] = new MowerState(x,y,mowerDirection);
+                m_mowers[k] = new Mower(x,y,mowerDirection,k,m_collisionDelay);
                 
             }
 
@@ -128,7 +124,6 @@ public class SimMonitor {
             m_numCrater = numCraters;
             for (k = 0; k < numCraters; k++) {
                 tokens = takeCommand.nextLine().split(DELIMITER);
-
                 // place a crater at the given location
                 m_lawnInfo[Integer.parseInt(tokens[0])][Integer.parseInt(tokens[1])] = code.CRATER_CODE;
             }
@@ -145,8 +140,7 @@ public class SimMonitor {
                 
                 x = Integer.parseInt(tokens[0]);
                 y = Integer.parseInt(tokens[1]);
-                m_puppies[k].setX(x);
-                m_puppies[k].setX(y);
+                m_puppies[k] = new Puppy(m_stayPercent,x,y);
                 m_lawnInfo[x][y] = code.PUPPY_GRASS_CODE;
             }
             
