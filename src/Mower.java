@@ -1,4 +1,8 @@
 public class Mower {
+	
+	public Mower(int x, int y, String dir, int id, int stallNum) {
+		
+	}
 
     //TODO: Implement this method.
     public String getNextAction() {
@@ -11,7 +15,7 @@ public class Mower {
     }
 
     //TODO: Implement this method.
-    public void finishMove() {
+    public void finishMove(int x, int y, String dir,int mowerStatus) {
 
     }
 
