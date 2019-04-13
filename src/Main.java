@@ -14,7 +14,7 @@ public class Main {
             int turns = 0;
             for(; turns < 100 & !monitor.stopRun(); turns++) {
                 monitor.pollMowerForAction();
-                monitor.validateMowerAction();
+                //monitor.validateMowerAction();
                 monitor.getPuppyAction();
                 
                 monitor.displayActionAndResponses();

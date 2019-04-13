@@ -9,20 +9,22 @@ import java.util.Random;
 import java.io.*;
 /**
  *
- * @author oscarc
+ * @author oscar
  */
 
 public class SimMonitor {
     private static Random randGenerator;
     private Mower[] m_mowers;
+    private MowerState[] m_mowerState;
     private Puppy[] m_puppies;
 
     private static final int DEFAULT_WIDTH = 15;
     private static final int DEFAULT_HEIGHT = 10;
+    private Constants code;
 
-    private Integer lawnHeight;
-    private Integer lawnWidth;
-    private Integer[][] lawnInfo;
+    private Integer m_lawnHeight;
+    private Integer m_lawnWidth;
+    private Integer[][] m_lawnInfo;
     private Integer[] m_scanResult;
     private Integer mowerX, mowerY;
     private String mowerDirection;
@@ -43,22 +45,16 @@ public class SimMonitor {
     private Integer m_stayPercent;
 
 
-    private final int EMPTY_CODE = 0;
-    private final int GRASS_CODE = 1;
-    private final int CRATER_CODE = 2;
-    private final int FENCE_CODE = 3;
-    private final int PUPPY_GRASS_CODE = 4;
-    private final int PUPPY_EMPTY_CODE = 5;
-    private final int PUPPY_MOWER_CODE = 6;
 
 
     public SimMonitor() {
         randGenerator = new Random();
-        
+        code = new Constants();
 
-        lawnHeight = 0;
-        lawnWidth = 0;
-        lawnInfo = new Integer[DEFAULT_WIDTH][DEFAULT_HEIGHT];
+        m_lawnHeight = 0;
+        m_lawnWidth = 0;
+        m_lawnInfo = new Integer[DEFAULT_WIDTH][DEFAULT_HEIGHT];
+        
         m_scanResult = new Integer[8];
         mowerX = -1;
         mowerY = -1;
@@ -70,31 +66,12 @@ public class SimMonitor {
         m_collisionDelay = 0;
         m_stayPercent = 0;
 
-        xDIR_MAP = new HashMap<>();
-        xDIR_MAP.put("North", 0);
-        xDIR_MAP.put("Northeast", 1);
-        xDIR_MAP.put("East", 1);
-        xDIR_MAP.put("Southeast", 1);
-        xDIR_MAP.put("South", 0);
-        xDIR_MAP.put("Southwest", -1);
-        xDIR_MAP.put("West", -1);
-        xDIR_MAP.put("Northwest", -1);
-
-        yDIR_MAP = new HashMap<>();
-        yDIR_MAP.put("North", 1);
-        yDIR_MAP.put("Northeast", 1);
-        yDIR_MAP.put("East", 0);
-        yDIR_MAP.put("Southeast", -1);
-        yDIR_MAP.put("South", -1);
-        yDIR_MAP.put("Southwest", -1);
-        yDIR_MAP.put("West", 0);
-        yDIR_MAP.put("Northwest", 1);
         
         SCAN_MAP = new HashMap<>();
-        SCAN_MAP.put(EMPTY_CODE, "empty");
-        SCAN_MAP.put(GRASS_CODE, "grass");
-        SCAN_MAP.put(CRATER_CODE, "crater");
-        SCAN_MAP.put(FENCE_CODE, "fence");
+        SCAN_MAP.put(code.EMPTY_CODE, "empty");
+        SCAN_MAP.put(code.GRASS_CODE, "grass");
+        SCAN_MAP.put(code.CRATER_CODE, "crater");
+        SCAN_MAP.put(code.FENCE_CODE, "fence");
     }
 
     public void uploadStartingFile(String testFileName) {
@@ -103,25 +80,27 @@ public class SimMonitor {
         try {
             Scanner takeCommand = new Scanner(new File(testFileName));
             String[] tokens;
-            int i, j, k;
+            int i, j, k , x, y;
 
             // read in the lawn information
             tokens = takeCommand.nextLine().split(DELIMITER);
-            lawnWidth = Integer.parseInt(tokens[0]);
+            m_lawnWidth = Integer.parseInt(tokens[0]);
             tokens = takeCommand.nextLine().split(DELIMITER);
-            lawnHeight = Integer.parseInt(tokens[0]);
+            m_lawnHeight = Integer.parseInt(tokens[0]);
+            
+            m_lawnInfo = new Integer[m_lawnWidth][m_lawnHeight];
 
-            // generate the lawn information
-            lawnInfo = new Integer[lawnWidth][lawnHeight];
-            for (i = 0; i < lawnWidth; i++) {
-                for (j = 0; j < lawnHeight; j++) {
-                    lawnInfo[i][j] = GRASS_CODE;
+            for (i = 0; i < m_lawnWidth; i++) {
+                for (j = 0; j < m_lawnHeight; j++) {
+                    m_lawnInfo[i][j] = code.GRASS_CODE;
                 }
             }
 
-            // read in the lawnmower starting information
+            // read in the lawn mower starting information
             tokens = takeCommand.nextLine().split(DELIMITER);
             int numMowers = Integer.parseInt(tokens[0]);
+            m_mowerState = new MowerState [numMowers];
+            m_mowers = new Mower [numMowers];
             
             tokens = takeCommand.nextLine().split(DELIMITER);
             m_collisionDelay = Integer.parseInt(tokens[0]);
@@ -130,7 +109,17 @@ public class SimMonitor {
                 tokens = takeCommand.nextLine().split(DELIMITER);
                 mowerDirection = tokens[2];
                 // mow the grass at the initial location
-                lawnInfo[Integer.parseInt(tokens[0])][Integer.parseInt(tokens[1])] = EMPTY_CODE;
+                x = Integer.parseInt(tokens[0]);
+                y = Integer.parseInt(tokens[1]);
+                m_lawnInfo[x][y] = code.EMPTY_CODE;
+                
+                m_mowerState[k].setX(x);
+                m_mowerState[k].setX(y);
+                m_mowerState[k].setDirection(mowerDirection);
+                
+                // TODO m_mowers[k].Mower();
+
+                
             }
 
             // read in the crater information
@@ -141,18 +130,24 @@ public class SimMonitor {
                 tokens = takeCommand.nextLine().split(DELIMITER);
 
                 // place a crater at the given location
-                lawnInfo[Integer.parseInt(tokens[0])][Integer.parseInt(tokens[1])] = CRATER_CODE;
+                m_lawnInfo[Integer.parseInt(tokens[0])][Integer.parseInt(tokens[1])] = code.CRATER_CODE;
             }
             
-                        // read in the lawnmower starting information
+            // read in the lawn mower starting information
             tokens = takeCommand.nextLine().split(DELIMITER);
             int numPuppy = Integer.parseInt(tokens[0]);
+            m_puppies = new Puppy [numPuppy];
             
             tokens = takeCommand.nextLine().split(DELIMITER);
             m_stayPercent = Integer.parseInt(tokens[0]);
             for (k = 0; k < numPuppy; k++) {
                 tokens = takeCommand.nextLine().split(DELIMITER);
-                lawnInfo[Integer.parseInt(tokens[0])][Integer.parseInt(tokens[1])] = PUPPY_GRASS_CODE;
+                
+                x = Integer.parseInt(tokens[0]);
+                y = Integer.parseInt(tokens[1]);
+                m_puppies[k].setX(x);
+                m_puppies[k].setX(y);
+                m_lawnInfo[x][y] = code.PUPPY_GRASS_CODE;
             }
             
             tokens = takeCommand.nextLine().split(DELIMITER);
@@ -168,25 +163,39 @@ public class SimMonitor {
     }
 
     public void pollMowerForAction() {
-        //int moveRandomChoice;
         ++m_turn;
-        for (Mower mower: m_mowers) {
-            singleMower(mower);
+        for (int i=0; i < m_mowers.length; ++i) {
+            singleMower(m_mowers[i], m_mowerState[i]);
         }
     }
 
-    private void singleMower(Mower mower) {
+    private void singleMower(Mower mower, MowerState mowerState) {
+    	
+    	if(mowerState.getState() == code.MOWER_OFF || mowerState.getState() == code.MOWER_CRASHED){
+    		return;
+    	}
+    	if(mowerState.getState() == code.MOWER_STALLED){
+    		int stallTurn = mowerState.getStallTurn();
+    		if( stallTurn > 0) {
+    			mowerState.setStallTurn(--stallTurn);
+    		}
+    		if(mowerState.getStallTurn() == 0 && m_lawnInfo[mowerState.getX()][mowerState.getY()] != code.PUPPY_MOWER_CODE) {
+    			mowerState.setState(code.MOWER_ACTIVE);
+    		}
+    		return;
+    	}
+   
         trackAction = mower.getNextAction();
         //moveRandomChoice = randGenerator.nextInt(100);
         if (trackAction.equals("turn_off")) {
-            // select turning off the mower as the action
             trackAction = "turn_off";
+            mowerState.setState(code.MOWER_OFF);
         }
-        //else if (moveRandomChoice < 10) {
         else if (trackAction.equals("scan") ){
             // select scanning as the action
             trackAction = "scan";
             scanSurrounding();
+            mower.provideScanResult(m_scanResult);
         }
         else {
             // select moving forward and the turning as the action
@@ -194,52 +203,37 @@ public class SimMonitor {
             Move move = mower.getMove();
             trackMoveDistance = move.getStep();
             trackNewDirection = move.getDirection();
-            mower.finishMove();
-            // determine a distance
-    /*        moveRandomChoice = randGenerator.nextInt(100);
-            if (moveRandomChoice < 20) {
-                trackMoveDistance = 0;
-            } else if (moveRandomChoice < 70) {
-                trackMoveDistance = 1;
-            } else {
-                trackMoveDistance = 2;
+            
+            if(trackMoveDistance == 0) {
+            	mowerState.setDirection(trackNewDirection);
+            	mower.finishMove(mowerState.getX(), mowerState.getY(), mowerState.getDirection(), mowerState.getState());
+            }
+            else if(trackMoveDistance == 1) {
+
+
+                int xOrientation = xDIR_MAP.get(mowerState.getDirection());
+                int yOrientation = yDIR_MAP.get(mowerState.getDirection());
+
+
+                mowerDirection = trackNewDirection;
+
+                int newSquareX = mowerX + trackMoveDistance * xOrientation;
+                int newSquareY = mowerY + trackMoveDistance * yOrientation;
+
+                if ((newSquareX >= 0 & newSquareX < m_lawnWidth & newSquareY >= 0 & newSquareY < m_lawnHeight)
+                        && (m_lawnInfo[newSquareX][newSquareY] != code.CRATER_CODE)) {
+                    mowerX = newSquareX;
+                    mowerY = newSquareY;
+                    trackMoveCheck = "ok";
+
+                    // update lawn status
+                    m_lawnInfo[mowerX][mowerY] = code.EMPTY_CODE;
+                } else {
+                    trackMoveCheck = "crash";
+                }
             }
 
-            // determine a new direction
-            moveRandomChoice = randGenerator.nextInt(100);
-            if (moveRandomChoice < 50) {
-                switch (mowerDirection) {
-                    case "South":
-                        trackNewDirection = "Southwest";
-                        break;
-                    case "Southwest":
-                        trackNewDirection = "West";
-                        break;
-                    case "West":
-                        trackNewDirection = "Northwest";
-                        break;
-                    case "Northwest":
-                        trackNewDirection = "North";
-                        break;
-                    case "Southeast":
-                        trackNewDirection = "South";
-                        break;
-                    case "North":
-                        trackNewDirection = "Northeast";
-                        break;
-                    case "Northeast":
-                        trackNewDirection = "East";
-                        break;
-                    case "East":
-                        trackNewDirection = "Southeast";
-                        break;
-                    default:
-                        trackNewDirection = mowerDirection;
-                        break;
-                }
-            } else {
-                trackNewDirection = mowerDirection;
-            }  */
+
         }
     }
 
@@ -265,7 +259,7 @@ public class SimMonitor {
         int yOrientation;
         if (trackAction.equals("scan")) {
             // in the case of a scan, return the information for the eight surrounding squares
-            // always use a northbound orientation
+            // always use a north bound orientation
             mower.provideScanResult(m_scanResult);
             //trackScanResults = "empty,grass,crater,fence,empty,grass,crater,fence";
             trackScanResults = SCAN_MAP.get(m_scanResult[0]) + "," +
@@ -291,14 +285,14 @@ public class SimMonitor {
             int newSquareX = mowerX + trackMoveDistance * xOrientation;
             int newSquareY = mowerY + trackMoveDistance * yOrientation;
 
-            if ((newSquareX >= 0 & newSquareX < lawnWidth & newSquareY >= 0 & newSquareY < lawnHeight)
-                    && (lawnInfo[newSquareX][newSquareY] != CRATER_CODE)) {
+            if ((newSquareX >= 0 & newSquareX < m_lawnWidth & newSquareY >= 0 & newSquareY < m_lawnHeight)
+                    && (m_lawnInfo[newSquareX][newSquareY] != code.CRATER_CODE)) {
                 mowerX = newSquareX;
                 mowerY = newSquareY;
                 trackMoveCheck = "ok";
 
                 // update lawn status
-                lawnInfo[mowerX][mowerY] = EMPTY_CODE;
+                m_lawnInfo[mowerX][mowerY] = code.EMPTY_CODE;
             } else {
                 trackMoveCheck = "crash";
             }
@@ -315,83 +309,83 @@ public class SimMonitor {
             switch(i)
             {
                 case 0:
-                    if(mowerY+1 == lawnHeight)
+                    if(mowerY+1 == m_lawnHeight)
                     {
-                        m_scanResult[0] = FENCE_CODE;
+                        m_scanResult[0] = code.FENCE_CODE;
                     }
                     else
                     {
-                        m_scanResult[0] = lawnInfo[mowerX][mowerY+1];
+                        m_scanResult[0] = m_lawnInfo[mowerX][mowerY+1];
                     }
                     break;
                 case 1:
-                    if(mowerY+1 == lawnHeight || mowerX+1 == lawnWidth)
+                    if(mowerY+1 == m_lawnHeight || mowerX+1 == m_lawnWidth)
                     {
-                        m_scanResult[1] = FENCE_CODE;
+                        m_scanResult[1] = code.FENCE_CODE;
                     }
                     else
                     {
-                        m_scanResult[1] = lawnInfo[mowerX+1][mowerY+1];
+                        m_scanResult[1] = m_lawnInfo[mowerX+1][mowerY+1];
                     }
                     break;
                 case 2:
-                    if(mowerX+1 == lawnWidth)
+                    if(mowerX+1 == m_lawnWidth)
                     {
-                        m_scanResult[2] = FENCE_CODE;
+                        m_scanResult[2] = code.FENCE_CODE;
                     }
                     else
                     {
-                        m_scanResult[2] = lawnInfo[mowerX+1][mowerY];
+                        m_scanResult[2] = m_lawnInfo[mowerX+1][mowerY];
                     }
                     break;
                 case 3:
-                    if(mowerX+1 == lawnWidth || mowerY == 0)
+                    if(mowerX+1 == m_lawnWidth || mowerY == 0)
                     {
-                        m_scanResult[3] = FENCE_CODE;
+                        m_scanResult[3] = code.FENCE_CODE;
                     }
                     else
                     {
-                        m_scanResult[3] = lawnInfo[mowerX+1][mowerY-1];
+                        m_scanResult[3] = m_lawnInfo[mowerX+1][mowerY-1];
                     }
                     break;
                 case 4:
                     if(mowerY == 0)
                     {
-                        m_scanResult[4] = FENCE_CODE;
+                        m_scanResult[4] = code.FENCE_CODE;
                     }
                     else
                     {
-                        m_scanResult[4] = lawnInfo[mowerX][mowerY-1];
+                        m_scanResult[4] = m_lawnInfo[mowerX][mowerY-1];
                     }
                     break;
                 case 5:
                     if(mowerX == 0 || mowerY == 0)
                     {
-                        m_scanResult[5] = FENCE_CODE;
+                        m_scanResult[5] = code.FENCE_CODE;
                     }
                     else
                     {
-                        m_scanResult[5] = lawnInfo[mowerX-1][mowerY-1];
+                        m_scanResult[5] = m_lawnInfo[mowerX-1][mowerY-1];
                     }
                     break;
                 case 6:
                     if(mowerX == 0)
                     {
-                        m_scanResult[6] = FENCE_CODE;
+                        m_scanResult[6] = code.FENCE_CODE;
                     }
                     else
                     {
-                        m_scanResult[6] = lawnInfo[mowerX-1][mowerY];
+                        m_scanResult[6] = m_lawnInfo[mowerX-1][mowerY];
                     }
                     break;
                 case 7:
-                    if(mowerX == 0 || mowerY+1 == lawnHeight)
+                    if(mowerX == 0 || mowerY+1 == m_lawnHeight)
                     {
-                        m_scanResult[7] = FENCE_CODE;
+                        m_scanResult[7] = code.FENCE_CODE;
                     }
                     else
                     {
-                        m_scanResult[7] = lawnInfo[mowerX-1][mowerY+1];
+                        m_scanResult[7] = m_lawnInfo[mowerX-1][mowerY+1];
                     }
                     break;
                 default:
@@ -423,15 +417,15 @@ public class SimMonitor {
         
         
         int total = 0;
-            for (int i = 0; i < lawnWidth; i++) {
-                for (int j = 0; j < lawnHeight; j++) {
-                    if(lawnInfo[i][j] == EMPTY_CODE)
+            for (int i = 0; i < m_lawnWidth; i++) {
+                for (int j = 0; j < m_lawnHeight; j++) {
+                    if(m_lawnInfo[i][j] == code.EMPTY_CODE)
                     {
                         total++;
                     }
                 }
             }
-        int lawnSize = lawnWidth*lawnHeight;
+        int lawnSize = m_lawnWidth * m_lawnHeight;
         int numGrass = lawnSize - m_numCrater;
         System.out.println(lawnSize + "," + numGrass + "," + total + "," + m_turn);
     }
@@ -446,36 +440,37 @@ public class SimMonitor {
 
     public void renderLawn() {
         int i, j;
-        int charWidth = 2 * lawnWidth + 2;
+        int charWidth = 2 * m_lawnWidth + 2;
 
         // display the rows of the lawn from top to bottom
-        for (j = lawnHeight - 1; j >= 0; j--) {
+        for (j = m_lawnHeight - 1; j >= 0; j--) {
             renderHorizontalBar(charWidth);
 
             // display the Y-direction identifier
             System.out.print(j);
 
             // display the contents of each square on this row
-            for (i = 0; i < lawnWidth; i++) {
+            for (i = 0; i < m_lawnWidth; i++) {
                 System.out.print("|");
 
                 // the mower overrides all other contents
                 if (i == mowerX & j == mowerY) {
                     System.out.print("M");
-                } else {
-                    switch (lawnInfo[i][j]) {
-                        case EMPTY_CODE:
-                            System.out.print(" ");
-                            break;
-                        case GRASS_CODE:
-                            System.out.print("g");
-                            break;
-                        case CRATER_CODE:
-                            System.out.print("c");
-                            break;
-                        default:
-                            break;
-                    }
+                } 
+                else {
+//                    switch (m_lawnInfo[i][j]) {
+//                        case code.EMPTY_CODE:
+//                            System.out.print(" ");
+//                            break;
+//                        case code.GRASS_CODE:
+//                            System.out.print("g");
+//                            break;
+//                        case code.CRATER_CODE:
+//                            System.out.print("c");
+//                            break;
+//                        default:
+//                            break;
+//                    }
                 }
             }
             System.out.println("|");
@@ -484,7 +479,7 @@ public class SimMonitor {
 
         // display the column X-direction identifiers
         System.out.print(" ");
-        for (i = 0; i < lawnWidth; i++) {
+        for (i = 0; i < m_lawnWidth; i++) {
             System.out.print(" " + i);
         }
         System.out.println("");
