@@ -165,31 +165,44 @@ public class SimMonitor {
 
     private void singleMower(Mower mower, MowerState mowerState) {
     	
+    	//Mower already off or Crashed , Return
     	if(mowerState.getState() == code.MOWER_OFF || mowerState.getState() == code.MOWER_CRASHED){
     		return;
     	}
+    	
+    	//Mower Stalled , either from running into mower earlier or current with a puppy
     	if(mowerState.getState() == code.MOWER_STALLED){
+    		
+    		//Puppy on top, return
+    		if(m_lawnInfo[mowerState.getX()][mowerState.getY()] == code.PUPPY_MOWER_CODE) {
+    			return;
+    		}
+    		
+    		//Stalled from previous crash, decrement stall turn
     		int stallTurn = mowerState.getStallTurn();
     		if( stallTurn > 0) {
     			mowerState.setStallTurn(--stallTurn);
     		}
-    		if(mowerState.getStallTurn() == 0 && m_lawnInfo[mowerState.getX()][mowerState.getY()] != code.PUPPY_MOWER_CODE) {
+    		//Stall turn is zero , Mower becomes active again
+    		if(mowerState.getStallTurn() == 0) {
     			mowerState.setState(code.MOWER_ACTIVE);
     		}
     		return;
     	}
    
         trackAction = mower.getNextAction();
-        //moveRandomChoice = randGenerator.nextInt(100);
+
         if (trackAction.equals("turn_off")) {
             trackAction = "turn_off";
             mowerState.setState(code.MOWER_OFF);
+            //TODO print to log
         }
         else if (trackAction.equals("scan") ){
             // select scanning as the action
             trackAction = "scan";
-            scanSurrounding();
+            scanSurrounding(mowerState);
             mower.provideScanResult(m_scanResult);
+            // TODO print to log
         }
         else {
             // select moving forward and the turning as the action
@@ -198,11 +211,13 @@ public class SimMonitor {
             trackMoveDistance = move.getStep();
             trackNewDirection = move.getDirection();
             
+            //Move 0 step
             if(trackMoveDistance == 0) {
             	mowerState.setDirection(trackNewDirection);
             	mower.finishMove(mowerState.getX(), mowerState.getY(), mowerState.getDirection(), mowerState.getState());
             }
-            else if(trackMoveDistance == 1) {
+            //Move 1 step
+            else if(trackMoveDistance > 0) {
 
 
                 int xOrientation = xDIR_MAP.get(mowerState.getDirection());
@@ -211,36 +226,210 @@ public class SimMonitor {
 
                 mowerDirection = trackNewDirection;
 
-                int newSquareX = mowerX + trackMoveDistance * xOrientation;
-                int newSquareY = mowerY + trackMoveDistance * yOrientation;
+                //int newSquareX = mowerX + trackMoveDistance * xOrientation;
+                //int newSquareY = mowerY + trackMoveDistance * yOrientation;
+                int mowerX = mowerState.getX();     //original X
+                int mowerY = mowerState.getY();     //original Y
+                int newSquareX = mowerX + 1 * xOrientation;
+                int newSquareY = mowerY+ 1 * yOrientation;
 
+                //If mower doesn't crash into fence or crater
                 if ((newSquareX >= 0 & newSquareX < m_lawnWidth & newSquareY >= 0 & newSquareY < m_lawnHeight)
                         && (m_lawnInfo[newSquareX][newSquareY] != code.CRATER_CODE)) {
-                    mowerX = newSquareX;
-                    mowerY = newSquareY;
-                    trackMoveCheck = "ok";
 
-                    // update lawn status
-                    m_lawnInfo[mowerX][mowerY] = code.EMPTY_CODE;
-                } else {
-                    trackMoveCheck = "crash";
+                    //trackMoveCheck = "ok";
+                   
+                    //Crash into another mower  or mower with puppy on top
+                    if(m_lawnInfo[newSquareX][newSquareY] == code.MOWER_CODE
+                    		|| m_lawnInfo[newSquareX][newSquareY] == code.PUPPY_MOWER_CODE) {
+                    	mowerState.setState(code.MOWER_STALLED);
+                    	mowerState.setStallTurn(m_collisionDelay);
+                    	mower.finishMove(mowerState.getX(), mowerState.getY(), mowerState.getDirection(), mowerState.getState());
+                    }
+                    //Crash into a puppy on grass or on empty
+                    else if(m_lawnInfo[newSquareX][newSquareY] == code.PUPPY_GRASS_CODE
+                    			|| m_lawnInfo[newSquareX][newSquareY] == code.PUPPY_EMPTY_CODE) {
+                    	                  	
+                    	if(m_lawnInfo[newSquareX][newSquareY] == code.PUPPY_GRASS_CODE) {
+                    		//decrease grass count;
+                    		;
+                    	}
+                    	mowerState.setState(code.MOWER_STALLED);
+                    	mowerState.setX(newSquareX);
+                    	mowerState.setY(newSquareY);
+                    	mowerState.setDirection(trackNewDirection);
+                    	m_lawnInfo[mowerX][mowerY] = code.EMPTY_CODE;
+                    	m_lawnInfo[newSquareX][newSquareY] = code.PUPPY_MOWER_CODE;
+                    	if(trackMoveDistance == 1){
+                    		mower.finishMove(newSquareX, newSquareY, mowerState.getDirection(), mowerState.getState());
+                    	}
+                    }
+                    //Regular grass or empty
+                    else {  
+                    	mowerState.setX(newSquareX);
+                    	mowerState.setY(newSquareY);
+                    	mowerState.setDirection(trackNewDirection);
+                    	m_lawnInfo[mowerX][mowerY] = code.EMPTY_CODE;
+                    	m_lawnInfo[newSquareX][newSquareY] = code.MOWER_CODE;
+                    	if(trackMoveDistance == 1){
+                    		mower.finishMove(newSquareX, newSquareY, mowerState.getDirection(), mowerState.getState());
+                    	}
+                    }
+                    
+                    ///Move 2 steps
+                    if(trackMoveDistance == 2) {
+                        int xOrient = xDIR_MAP.get(mowerState.getDirection());
+                        int yOrient = yDIR_MAP.get(mowerState.getDirection());
+
+
+                        mowerDirection = trackNewDirection;
+
+                        int oldX = mowerState.getX();     //original X
+                        int oldY = mowerState.getY();     //original Y
+                        int newX = oldX + 1 * xOrient;
+                        int newY = oldY + 1 * yOrient;
+
+                        //If mower doesn't crash into fence or crater
+                        if ((newX >= 0 & newX < m_lawnWidth & newY >= 0 & newY < m_lawnHeight)
+                                && (m_lawnInfo[newX][newY] != code.CRATER_CODE)) {
+                            
+                            //Crash into another mower  or mower with puppy on top
+                            if(m_lawnInfo[newX][newY] == code.MOWER_CODE
+                            		|| m_lawnInfo[newX][newY] == code.PUPPY_MOWER_CODE) {
+                            	mowerState.setState(code.MOWER_STALLED);
+                            	mowerState.setStallTurn(m_collisionDelay);
+                            	mower.finishMove(mowerState.getX(), mowerState.getY(), mowerState.getDirection(), mowerState.getState());
+                            }
+                            //Crash into a puppy on grass or on empty
+                            else if(m_lawnInfo[newX][newY] == code.PUPPY_GRASS_CODE
+                            			|| m_lawnInfo[newX][newY] == code.PUPPY_EMPTY_CODE) {
+                            	                  	
+                            	if(m_lawnInfo[newX][newY] == code.PUPPY_GRASS_CODE) {
+                            		//decrease grass count;
+                            		;
+                            	}
+                            	mowerState.setState(code.MOWER_STALLED);
+                            	mowerState.setX(newX);
+                            	mowerState.setY(newY);
+                            	mowerState.setDirection(trackNewDirection);
+                            	m_lawnInfo[oldX][oldY] = code.EMPTY_CODE;
+                            	m_lawnInfo[newX][newY] = code.PUPPY_MOWER_CODE;
+                            	if(trackMoveDistance == 2){
+                            		mower.finishMove(newX, newY, mowerState.getDirection(), mowerState.getState());
+                            	}
+                            }
+                            //Regular grass or empty
+                            else {  
+                            	mowerState.setX(newX);
+                            	mowerState.setY(newY);
+                            	mowerState.setDirection(trackNewDirection);
+                            	m_lawnInfo[oldX][oldY] = code.EMPTY_CODE;
+                            	m_lawnInfo[newX][newY] = code.MOWER_CODE;
+                            	if(trackMoveDistance == 2){
+                            		mower.finishMove(newX, newY, mowerState.getDirection(), mowerState.getState());
+                            	}
+                            }
+                        }
+                        //Crash into fence or crater
+                        else {
+                            trackMoveCheck = "crash";
+                            mowerState.setState(code.MOWER_CRASHED);
+                            m_lawnInfo[oldX][oldY] = code.EMPTY_CODE;
+                            mower.finishMove(oldX, oldY, mowerState.getDirection(), mowerState.getState());
+                        } 
+                    	
+                    }
+
                 }
+                //Crash into fence or crater
+                else {
+                    trackMoveCheck = "crash";
+                    mowerState.setState(code.MOWER_CRASHED);
+                    m_lawnInfo[mowerX][mowerY] = code.EMPTY_CODE;
+                    mower.finishMove(mowerX, mowerY, mowerState.getDirection(), mowerState.getState());
+                } 
             }
-
-
-        }
+        }        
     }
 
     public void validateMowerAction() {
         int xOrientation, yOrientation;
-        for (Mower mower: m_mowers) {
-            validateSingleMowerAction(mower);
-        }
+//        for (Mower mower: m_mowers) {
+//            validateSingleMowerAction(mower);
+//        }
     }
 
     //TODO: Implement this method.
     public void getPuppyAction() {
-
+        for (int i=0; i < m_puppies.length; ++i) {
+            singlePuppy(m_puppies[i]);
+        }
+    }
+    
+    public void singlePuppy(Puppy puppy) {
+    	
+    	if(puppy.isStaying()) {
+    		return;
+    	}
+    	
+    	Boolean found = false;    	
+    	while(!found){
+    		
+	    	Integer move = puppy.getMove();
+	    	String dir = code.DIRECTIONS[move];
+	    	
+	        int xOrientation = xDIR_MAP.get(dir);
+	        int yOrientation = yDIR_MAP.get(dir);
+	        int oldX = puppy.getX();     //original X
+	        int oldY = puppy.getY();     //original Y
+	        int newX = oldX + 1 * xOrientation;
+	        int newY = oldY+ 1 * yOrientation;
+	        
+	        if ((newX >= 0 & newX < m_lawnWidth & newY >= 0 & newY < m_lawnHeight)
+                    && (m_lawnInfo[newX][newY] != code.CRATER_CODE)
+                    && (m_lawnInfo[newX][newY] != code.PUPPY_MOWER_CODE)
+                    && (m_lawnInfo[newX][newY] != code.PUPPY_GRASS_CODE)
+                    && (m_lawnInfo[newX][newY] != code.PUPPY_EMPTY_CODE)) {
+	        	
+	        	found = true;
+	        	if(m_lawnInfo[newX][newY] == code.EMPTY_CODE) {
+	        		m_lawnInfo[newX][newY] = code.PUPPY_EMPTY_CODE;
+	        	}
+	        	if(m_lawnInfo[newX][newY] == code.GRASS_CODE) {
+	        		m_lawnInfo[newX][newY] = code.PUPPY_GRASS_CODE;
+	        	}
+	        	if(m_lawnInfo[newX][newY] == code.MOWER_CODE) {
+	        		m_lawnInfo[newX][newY] = code.PUPPY_MOWER_CODE;
+	        		for(int i = 0; i < m_mowers.length; i++) {
+	        			if(m_mowerState[i].getX() == newX && m_mowerState[i].getY() == newY) {
+	        				m_mowerState[i].setState(code.MOWER_STALLED);
+	        				break;
+	        			}
+	        		}
+	        	}
+	        	
+	        	puppy.setX(newX);
+	        	puppy.setY(newY);
+	        	
+	        	if(m_lawnInfo[oldX][oldY] == code.PUPPY_EMPTY_CODE) {
+	        		m_lawnInfo[oldX][oldY] = code.EMPTY_CODE;
+	        	}
+	        	if(m_lawnInfo[oldX][oldY] == code.PUPPY_GRASS_CODE) {
+	        		m_lawnInfo[oldX][oldY] = code.GRASS_CODE;
+	        	}
+	        	if(m_lawnInfo[oldX][oldY] == code.PUPPY_MOWER_CODE) {
+	        		m_lawnInfo[oldX][oldY] = code.MOWER_CODE;
+	        		for(int i = 0; i < m_mowers.length; i++) {
+	        			if(m_mowerState[i].getX() == newX && m_mowerState[i].getY() == newY) {
+	        				if(m_mowerState[i].getStallTurn() == 0) {
+	        					m_mowerState[i].setState(code.MOWER_ACTIVE);
+	        					break;
+	        				}
+	        			}
+	        		}
+	        	}
+	        }
+    	}       
     }
 
     //TODO: Implement this method.
@@ -248,56 +437,58 @@ public class SimMonitor {
 
     }
 
-    private void validateSingleMowerAction(Mower mower) {
-        int xOrientation;
-        int yOrientation;
-        if (trackAction.equals("scan")) {
-            // in the case of a scan, return the information for the eight surrounding squares
-            // always use a north bound orientation
-            mower.provideScanResult(m_scanResult);
-            //trackScanResults = "empty,grass,crater,fence,empty,grass,crater,fence";
-            trackScanResults = SCAN_MAP.get(m_scanResult[0]) + "," +
-                    SCAN_MAP.get(m_scanResult[1]) + "," +
-                    SCAN_MAP.get(m_scanResult[2]) + "," +
-                    SCAN_MAP.get(m_scanResult[3]) + "," +
-                    SCAN_MAP.get(m_scanResult[4]) + "," +
-                    SCAN_MAP.get(m_scanResult[5]) + "," +
-                    SCAN_MAP.get(m_scanResult[6]) + "," +
-                    SCAN_MAP.get(m_scanResult[7]);
+//    private void validateSingleMowerAction(Mower mower) {
+//        int xOrientation;
+//        int yOrientation;
+//        if (trackAction.equals("scan")) {
+//            // in the case of a scan, return the information for the eight surrounding squares
+//            // always use a north bound orientation
+//            mower.provideScanResult(m_scanResult);
+//            //trackScanResults = "empty,grass,crater,fence,empty,grass,crater,fence";
+//            trackScanResults = SCAN_MAP.get(m_scanResult[0]) + "," +
+//                    SCAN_MAP.get(m_scanResult[1]) + "," +
+//                    SCAN_MAP.get(m_scanResult[2]) + "," +
+//                    SCAN_MAP.get(m_scanResult[3]) + "," +
+//                    SCAN_MAP.get(m_scanResult[4]) + "," +
+//                    SCAN_MAP.get(m_scanResult[5]) + "," +
+//                    SCAN_MAP.get(m_scanResult[6]) + "," +
+//                    SCAN_MAP.get(m_scanResult[7]);
+//
+//        } else if (trackAction.equals("move")) {
+//            // in the case of a move, ensure that the move doesn't cross craters or fences
+//
+//
+//            xOrientation = xDIR_MAP.get(mowerDirection);
+//            yOrientation = yDIR_MAP.get(mowerDirection);
+//
+//            // just for this demonstration, allow the mower to change direction
+//            // even if the move forward causes a crash
+//            mowerDirection = trackNewDirection;
+//
+//            int newSquareX = mowerX + trackMoveDistance * xOrientation;
+//            int newSquareY = mowerY + trackMoveDistance * yOrientation;
+//
+//            if ((newSquareX >= 0 & newSquareX < m_lawnWidth & newSquareY >= 0 & newSquareY < m_lawnHeight)
+//                    && (m_lawnInfo[newSquareX][newSquareY] != code.CRATER_CODE)) {
+//                mowerX = newSquareX;
+//                mowerY = newSquareY;
+//                trackMoveCheck = "ok";
+//
+//                // update lawn status
+//                m_lawnInfo[mowerX][mowerY] = code.EMPTY_CODE;
+//            } else {
+//                trackMoveCheck = "crash";
+//            }
+//
+//        } else if (trackAction.equals("turn_off")) {
+//            trackMoveCheck = "ok";
+//        }
+//    }
 
-        } else if (trackAction.equals("move")) {
-            // in the case of a move, ensure that the move doesn't cross craters or fences
-
-
-            xOrientation = xDIR_MAP.get(mowerDirection);
-            yOrientation = yDIR_MAP.get(mowerDirection);
-
-            // just for this demonstration, allow the mower to change direction
-            // even if the move forward causes a crash
-            mowerDirection = trackNewDirection;
-
-            int newSquareX = mowerX + trackMoveDistance * xOrientation;
-            int newSquareY = mowerY + trackMoveDistance * yOrientation;
-
-            if ((newSquareX >= 0 & newSquareX < m_lawnWidth & newSquareY >= 0 & newSquareY < m_lawnHeight)
-                    && (m_lawnInfo[newSquareX][newSquareY] != code.CRATER_CODE)) {
-                mowerX = newSquareX;
-                mowerY = newSquareY;
-                trackMoveCheck = "ok";
-
-                // update lawn status
-                m_lawnInfo[mowerX][mowerY] = code.EMPTY_CODE;
-            } else {
-                trackMoveCheck = "crash";
-            }
-
-        } else if (trackAction.equals("turn_off")) {
-            trackMoveCheck = "ok";
-        }
-    }
-
-    public void scanSurrounding(){
+    public void scanSurrounding(MowerState mowerState){
         
+    	int mowerX = mowerState.getX();
+    	int mowerY = mowerState.getY();
         for(int i=0; i<8; ++i)
         {
             switch(i)
