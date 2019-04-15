@@ -152,8 +152,22 @@ public class Mower extends LawnmowerShared {
     this.direction = dir;
   }
 
-  //TODO: Implement this method.
+  /**
+   * This method will update the scan results for the map.
+   * It will assign the values for the map starting with North Direction and moving clockwise.
+   * @param values
+   */
   public void provideScanResult(Integer[] values) {
-
+    if (values == null || values.length != 8) {
+      throw new IllegalArgumentException( "The method 'provideScanResult' needs 8 values and incorrect number were provided " + values);
+    }
+    grid_observed.updateGrid(mowerX + c.xDIR_MAP.get("north"), mowerY + c.yDIR_MAP.get("north"), values[0]);
+    grid_observed.updateGrid(mowerX + c.xDIR_MAP.get("northeast"), mowerY + c.yDIR_MAP.get("northeast"), values[1]);
+    grid_observed.updateGrid(mowerX + c.xDIR_MAP.get("east"), mowerY + c.yDIR_MAP.get("east"), values[2]);
+    grid_observed.updateGrid(mowerX + c.xDIR_MAP.get("southeast"), mowerY + c.yDIR_MAP.get("southeast"), values[3]);
+    grid_observed.updateGrid(mowerX + c.xDIR_MAP.get("south"), mowerY + c.yDIR_MAP.get("south"), values[4]);
+    grid_observed.updateGrid(mowerX + c.xDIR_MAP.get("southwest"), mowerY + c.yDIR_MAP.get("southwest"), values[5]);
+    grid_observed.updateGrid(mowerX + c.xDIR_MAP.get("west"), mowerY + c.yDIR_MAP.get("west"), values[6]);
+    grid_observed.updateGrid(mowerX + c.xDIR_MAP.get("northwest"), mowerY + c.yDIR_MAP.get("northwest"), values[7]);
   }
 }
