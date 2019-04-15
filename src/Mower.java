@@ -7,7 +7,7 @@ public class Mower extends LawnmowerShared {
   private String direction;
   private String mowerAction;
   public int mowerState;
-  private int mowerX, mowerY;
+  public int mowerX, mowerY;
   private Integer trackMoveDistance;
   private String trackNewDirection;
   private Constants c = new Constants();
@@ -56,13 +56,6 @@ public class Mower extends LawnmowerShared {
 
   //TODO: Implement this method.
   public String getNextAction() {
-    if (mowerState == c.MOWER_STALLED) {
-      turns_stalled--;
-      if (turns_stalled == 0)
-        mowerState =  c.MOWER_ACTIVE;
-      mowerAction = "move";
-      return "move";
-    }
     // should I turn off?
     // check if surrounding square is unknown
     if (nearbysquare(c.UNKNOWN_CODE)) {
@@ -118,7 +111,7 @@ public class Mower extends LawnmowerShared {
           point++;
         }
       }
-      if (point ==0){
+      if (point == 0){
         trackNewDirection = find_rand_direction(c.EMPTY_CODE);
       }else{
         trackNewDirection = c.DIRECTIONS[select[randGenerator.nextInt(point)]];
