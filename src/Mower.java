@@ -4,7 +4,7 @@ import java.util.Random;
 
 public class Mower extends LawnmowerShared {
   private static Random randGenerator;
-  private String direction;
+  public String direction;
   private String mowerAction;
   public int mowerState;
   public int mowerX, mowerY;
@@ -16,6 +16,7 @@ public class Mower extends LawnmowerShared {
   private Move nextMove;
 
   public Mower(int locX, int locY, String dir, int id) {
+    randGenerator = new Random();
     mower_id = id;
     mowerX = locX;
     mowerY = locY;
@@ -136,13 +137,26 @@ public class Mower extends LawnmowerShared {
    * @param dir String direction value.
    * @param mowerStatus integer for mower state.
    */
-  public void finishMove(int x, int y, String dir,int mowerStatus) {
+  public void finishMove(Move m, int mowerStatus, int stalled_turns) { //int x, int y, String dir,
     grid_observed.updateGrid(mowerX, mowerY, c.EMPTY_CODE);
-    grid_observed.updateGrid(x, y, c.MOWER_CODE);
-    this.mowerX = x;
-    this.mowerY = y;
     this.mowerState = mowerStatus;
-    this.direction = dir;
+    this.turns_stalled = stalled_turns;
+
+    if (mowerStatus != c.MOWER_CRASHED){
+      int xOrientation = c.xDIR_MAP.get(direction);
+      int yOrientation = c.yDIR_MAP.get(direction);
+      for (int step = 0; step <= m.getStep(); step++) {
+        grid_observed.updateGrid(mowerX+step*xOrientation, mowerY+step*yOrientation, c.EMPTY_CODE);
+      }
+      int step = m.getStep();
+      int x = mowerX+step*xOrientation;
+      int y = mowerY+step*yOrientation;
+      grid_observed.updateGrid(x, y, c.MOWER_CODE);
+      this.mowerX = x;
+      this.mowerY = y;
+      if (m.getDirection() != "unknown")
+        this.direction = m.getDirection();
+    }
   }
 
   /**
