@@ -114,7 +114,7 @@ public class SimMonitor {
                 m_lawnInfo[x][y] = code.EMPTY_CODE;
                 
                 m_mowerState[k] = new MowerState(x,y,mowerDirection);
-                m_mowers[k] = new Mower(x,y,mowerDirection,k,m_collisionDelay);
+                m_mowers[k] = new Mower(x,y,mowerDirection,k);
                 
             }
 
