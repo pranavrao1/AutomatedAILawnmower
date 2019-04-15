@@ -1,7 +1,7 @@
 public abstract class LawnmowerShared {
     public static Lawn grid_observed;
-    public static int knownHeight = 0;
-    public static int knownWidth = 0;
+    public static int knownHeight = 1;
+    public static int knownWidth = 1;
     public Constants c = new Constants();
 
     private boolean fencesFound(int knownBaseX, int knownBaseY){

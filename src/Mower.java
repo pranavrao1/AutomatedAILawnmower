@@ -17,8 +17,8 @@ public class Mower extends LawnmowerShared {
   public Mower(int locX, int locY, String dir, int id) {
     randGenerator = new Random();
     mower_id = id;
-    mowerX = locX;
-    mowerY = locY;
+    mowerX = locX + 1;
+    mowerY = locY + 1;
     direction = dir;
     mowerState = c.MOWER_ACTIVE;
     turns_stalled = 0;
@@ -26,8 +26,12 @@ public class Mower extends LawnmowerShared {
     trackMoveDistance = 0;
     trackNewDirection = dir;
     if(grid_observed == null){
-      grid_observed = new Lawn(c.DEFAULT_WIDTH,c.DEFAULT_HEIGHT,c.UNKNOWN_CODE);
+      grid_observed = new Lawn(c.DEFAULT_WIDTH + 2,c.DEFAULT_HEIGHT + 2,c.UNKNOWN_CODE);
     }
+    if (knownHeight <= mowerY)
+      knownHeight = mowerY + 1;
+    if (knownWidth <= mowerX)
+      knownWidth = mowerX + 1;
   }
 
   private boolean nearbysquare(int code){
@@ -72,7 +76,7 @@ public class Mower extends LawnmowerShared {
     mowerAction = "move";
     // move in the direction if possible.
     // check if you can move 2 in current direction (Grass and empty are okay).
-    int max_move = 0;
+    int max_move;
     int [][] knowledgeMap = grid_observed.getGrid();
     int xOrientation = c.xDIR_MAP.get(direction);
     int yOrientation = c.yDIR_MAP.get(direction);
@@ -80,7 +84,7 @@ public class Mower extends LawnmowerShared {
     int lmowerY = mowerY;
     for (max_move = 0; max_move < 2; max_move++){
       int value =knowledgeMap[mowerX+max_move*xOrientation][mowerY+max_move*yOrientation];
-      if(value == c.CRATER_CODE || value == c.FENCE_CODE || value == c.UNKNOWN_CODE) {
+      if(value == c.CRATER_CODE || value == c.FENCE_CODE || value == c.UNKNOWN_CODE || value == c.MOWER_CODE || value == c.PUPPY_MOWER_CODE) {
         break;
       }
     }
@@ -170,13 +174,14 @@ public class Mower extends LawnmowerShared {
     if (values == null || values.length != 8) {
       throw new IllegalArgumentException( "The method 'provideScanResult' needs 8 values and incorrect number were provided " + values);
     }
-    grid_observed.updateGrid(mowerX + c.xDIR_MAP.get("north"), mowerY + c.yDIR_MAP.get("north"), values[0]);
-    grid_observed.updateGrid(mowerX + c.xDIR_MAP.get("northeast"), mowerY + c.yDIR_MAP.get("northeast"), values[1]);
-    grid_observed.updateGrid(mowerX + c.xDIR_MAP.get("east"), mowerY + c.yDIR_MAP.get("east"), values[2]);
-    grid_observed.updateGrid(mowerX + c.xDIR_MAP.get("southeast"), mowerY + c.yDIR_MAP.get("southeast"), values[3]);
-    grid_observed.updateGrid(mowerX + c.xDIR_MAP.get("south"), mowerY + c.yDIR_MAP.get("south"), values[4]);
-    grid_observed.updateGrid(mowerX + c.xDIR_MAP.get("southwest"), mowerY + c.yDIR_MAP.get("southwest"), values[5]);
-    grid_observed.updateGrid(mowerX + c.xDIR_MAP.get("west"), mowerY + c.yDIR_MAP.get("west"), values[6]);
-    grid_observed.updateGrid(mowerX + c.xDIR_MAP.get("northwest"), mowerY + c.yDIR_MAP.get("northwest"), values[7]);
+    for (int i = 0; i < 8; i++){
+      int x_axis = mowerX + c.xDIR_MAP.get(c.DIRECTIONS[i]);
+      int y_axis = mowerY + c.yDIR_MAP.get(c.DIRECTIONS[i]);
+      if (knownHeight <= y_axis)
+        knownHeight = y_axis + 1;
+      if (knownWidth <= x_axis)
+        knownWidth = x_axis + 1;
+      grid_observed.updateGrid(x_axis, y_axis, values[i]);
+    }
   }
 }
