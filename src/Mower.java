@@ -10,7 +10,6 @@ public class Mower extends LawnmowerShared {
   public int mowerX, mowerY;
   private Integer trackMoveDistance;
   private String trackNewDirection;
-  private Constants c = new Constants();
   public int turns_stalled;
   public int mower_id;
   private Move nextMove;
@@ -58,6 +57,11 @@ public class Mower extends LawnmowerShared {
   //TODO: Implement this method.
   public String getNextAction() {
     // should I turn off?
+    if(surroundedByFence(this.mowerX, this.mowerY)){
+      //System.out.println("Turn off");
+      mowerAction = "turn_off";
+      return mowerAction;
+    }
     // check if surrounding square is unknown
     if (nearbysquare(c.UNKNOWN_CODE)) {
       mowerAction = "scan";
