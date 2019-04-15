@@ -26,7 +26,12 @@ public class Lawn {
     public int [] getSurroundingSquares(int x, int y) {
         int [] scan_result = new int[8];
         for (int i = 0; i < 8; i++) {
-            scan_result[i] = grid[x + c.xDIR_MAP.get(c.DIRECTIONS[i])][y + c.yDIR_MAP.get(c.DIRECTIONS[i])];
+            int x_axis = x + c.xDIR_MAP.get(c.DIRECTIONS[i]);
+            int y_axis = y + c.yDIR_MAP.get(c.DIRECTIONS[i]);
+            if (x_axis < 0 || x_axis >= width || y_axis < 0 || y_axis >= height)
+                scan_result[i] = c.FENCE_CODE;
+            else
+                scan_result[i] = grid[x_axis][y_axis];
         }
         return scan_result;
     }
