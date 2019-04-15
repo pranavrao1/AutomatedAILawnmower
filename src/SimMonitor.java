@@ -207,7 +207,7 @@ public class SimMonitor {
         else {
             // select moving forward and the turning as the action
             trackAction = "move";
-            Move move = mower.getMove();
+            Move move = mower.getNextMove();
             trackMoveDistance = move.getStep();
             trackNewDirection = move.getDirection();
             

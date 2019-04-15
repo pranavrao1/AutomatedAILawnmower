@@ -6,7 +6,7 @@ public class Mower extends LawnmowerShared {
   private static Random randGenerator;
   private String direction;
   private String mowerAction;
-  public String mowerState;
+  public int mowerState;
   private int mowerX, mowerY;
   private Integer trackMoveDistance;
   private String trackNewDirection;
@@ -20,7 +20,7 @@ public class Mower extends LawnmowerShared {
     mowerX = locX;
     mowerY = locY;
     direction = dir;
-    mowerState = "on";
+    mowerState = c.MOWER_ACTIVE;
     turns_stalled = 0;
     mowerAction = "move";
     trackMoveDistance = 0;
@@ -56,10 +56,10 @@ public class Mower extends LawnmowerShared {
 
   //TODO: Implement this method.
   public String getNextAction() {
-    if (mowerState == "stalled") {
+    if (mowerState == c.MOWER_STALLED) {
       turns_stalled--;
       if (turns_stalled == 0)
-        mowerState = "on";
+        mowerState =  c.MOWER_ACTIVE;
       mowerAction = "move";
       return "move";
     }
@@ -128,14 +128,21 @@ public class Mower extends LawnmowerShared {
     return mowerAction;
   }
 
-  //TODO: Implement this method.
-  public Move getMove() {
+  /**
+   * This methods
+   * @return
+   */
+  public Move getNextMove() {
     return nextMove;
   }
 
   //TODO: Implement this method.
   public void finishMove(int x, int y, String dir,int mowerStatus) {
-
+    grid_observed.updateGrid(mowerX, mowerY, c.EMPTY_CODE);
+    grid_observed.updateGrid(x, y, c.MOWER_CODE);
+    this.mowerX = x;
+    this.mowerY = y;
+    this.mowerState = mowerStatus;
   }
 
   //TODO: Implement this method.
