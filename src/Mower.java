@@ -129,20 +129,27 @@ public class Mower extends LawnmowerShared {
   }
 
   /**
-   * This methods
+   * This methods returns the value for the next move as determined by the mower logic.
    * @return
    */
   public Move getNextMove() {
     return nextMove;
   }
 
-  //TODO: Implement this method.
+  /**
+   * This method is run to update the mower when a move is completed.
+   * @param x mower X grid value.
+   * @param y mower y grid value.
+   * @param dir String direction value.
+   * @param mowerStatus integer for mower state.
+   */
   public void finishMove(int x, int y, String dir,int mowerStatus) {
     grid_observed.updateGrid(mowerX, mowerY, c.EMPTY_CODE);
     grid_observed.updateGrid(x, y, c.MOWER_CODE);
     this.mowerX = x;
     this.mowerY = y;
     this.mowerState = mowerStatus;
+    this.direction = dir;
   }
 
   //TODO: Implement this method.
