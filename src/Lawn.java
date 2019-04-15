@@ -1,3 +1,6 @@
+import java.util.Arrays;
+import java.util.List;
+
 public class Lawn {
     private int height;
     private int width;
@@ -11,7 +14,7 @@ public class Lawn {
 
         for (int i =0; i< width; i++){
             for (int j =0; j< height; j++){
-                grid_observed[i][j] = square_type;
+                grid[i][j] = square_type;
             }
         }
     }
@@ -23,7 +26,7 @@ public class Lawn {
     public int [] getSurroundingSquares(int x, int y) {
         int [] scan_result = new int[8];
         for (int i = 0; i < 8; i++) {
-            scan_result[i] = grid[x + xDIR_MAP.get(c.DIRECTIONS[i])][y + yDIR_MAP.get(c.DIRECTIONS[i])];
+            scan_result[i] = grid[x + c.xDIR_MAP.get(c.DIRECTIONS[i])][y + c.yDIR_MAP.get(c.DIRECTIONS[i])];
         }
         return scan_result;
     }
@@ -49,11 +52,10 @@ public class Lawn {
 
     public int getMowedSquares(){
         int m = 0;
-        int a2check = new Array[]{c.MOWER_CODE, c.EMPTY_CODE, c.PUPPY_EMPTY_CODE, c.PUPPY_MOWER_CODE};
-        List<int> list = Arrays.asList(a2check);
+        int [] a2check = new int[]{c.MOWER_CODE, c.EMPTY_CODE, c.PUPPY_EMPTY_CODE, c.PUPPY_MOWER_CODE};
         for (int i =0; i< width; i++){
             for (int j =0; j< height; j++){
-                if (list.contains(grid_observed[i][j])){
+                if (grid[i][j] == c.MOWER_CODE || grid[i][j] == c.EMPTY_CODE|| grid[i][j] == c.PUPPY_EMPTY_CODE || grid[i][j] == c.PUPPY_MOWER_CODE){
                     m++;
                 }
             }

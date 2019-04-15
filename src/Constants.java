@@ -10,11 +10,16 @@ public final class Constants {
 	public final int PUPPY_EMPTY_CODE = 5;
 	public final int PUPPY_GRASS_CODE = 6;
 	public final int PUPPY_MOWER_CODE = 7;
+    public final int UNKNOWN_CODE = 8;
+    public final String[] SQUARES = {"empty","grass","mower","crater","fence","puppy_empty","puppy_grass","puppy_mower","unknown"};
 	
 	public final int MOWER_ACTIVE = 0;
 	public final int MOWER_STALLED = 1;
 	public final int MOWER_CRASHED = 2;
 	public final int MOWER_OFF = 3;
+
+    public final int DEFAULT_WIDTH = 15;
+    public final int DEFAULT_HEIGHT = 10;
     
     public final String[] DIRECTIONS = {"north","northeast","east","southeast","south","southwest","west","northwest"};
     public final HashMap<String, Integer> xDIR_MAP;
