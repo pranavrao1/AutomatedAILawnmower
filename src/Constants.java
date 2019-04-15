@@ -17,6 +17,7 @@ public final class Constants {
 	public final int MOWER_STALLED = 1;
 	public final int MOWER_CRASHED = 2;
 	public final int MOWER_OFF = 3;
+    public final String[] MOWER_STATE = {"ok", "stall", "crash", "off"};
 
     public final int DEFAULT_WIDTH = 15;
     public final int DEFAULT_HEIGHT = 10;
