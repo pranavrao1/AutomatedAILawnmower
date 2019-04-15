@@ -55,3 +55,20 @@ Total Points | First Squre | Second Squre
 1 | Empty | Grass
 0 | Empty | Empty
 -1 | Fence/Crater/Unknown | Empty/Grass
+
+
+#  Input File Format
+Your system must be able to read in an input file to begin the simulation run. Given the addition of
+puppies and other changes to the simulation environment, we are providing an updated input file
+format:
+1. <the width (horizontal/X-direction) of the lawn>
+2. <the height (vertical/Y-direction) of the lawn>
+3. <the number of lawnmowers being used>
+4. <the mower “collision delay”: the number of turns stalled if it collides with another mower>
+5. <the initial location and direction of each lawnmower> [one line per lawnmower]
+6. <the number of craters on the lawn>
+7. <the location of each crater> [one line per crater]
+8. <the number of puppies on the lawn>
+9. <the puppy “stay percentage”: the probability that a puppy stays at its current location>
+10. <the initial location of each puppy> [one line per puppy]
+11. <the maximum number of turns for the simulation>
