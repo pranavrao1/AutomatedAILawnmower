@@ -141,22 +141,20 @@ public class Mower extends LawnmowerShared {
     grid_observed.updateGrid(mowerX, mowerY, c.EMPTY_CODE);
     this.mowerState = mowerStatus;
     this.turns_stalled = stalled_turns;
-
-    if (mowerStatus != c.MOWER_CRASHED){
-      int xOrientation = c.xDIR_MAP.get(direction);
-      int yOrientation = c.yDIR_MAP.get(direction);
-      for (int step = 0; step <= m.getStep(); step++) {
-        grid_observed.updateGrid(mowerX+step*xOrientation, mowerY+step*yOrientation, c.EMPTY_CODE);
-      }
-      int step = m.getStep();
-      int x = mowerX+step*xOrientation;
-      int y = mowerY+step*yOrientation;
-      grid_observed.updateGrid(x, y, c.MOWER_CODE);
-      this.mowerX = x;
-      this.mowerY = y;
-      if (m.getDirection() != "unknown")
-        this.direction = m.getDirection();
+    int xOrientation = c.xDIR_MAP.get(direction);
+    int yOrientation = c.yDIR_MAP.get(direction);
+    for (int step = 0; step <= m.getStep(); step++) {
+      grid_observed.updateGrid(mowerX+step*xOrientation, mowerY+step*yOrientation, c.EMPTY_CODE);
     }
+    int step = m.getStep();
+    int x = mowerX+step*xOrientation;
+    int y = mowerY+step*yOrientation;
+    if (mowerStatus != c.MOWER_CRASHED)
+      grid_observed.updateGrid(x, y, c.MOWER_CODE);
+    this.mowerX = x;
+    this.mowerY = y;
+    if (m.getDirection() != "unknown")
+      this.direction = m.getDirection();
   }
 
   /**

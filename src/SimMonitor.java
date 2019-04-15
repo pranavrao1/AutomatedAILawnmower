@@ -271,7 +271,7 @@ public class SimMonitor {
                         trackMoveCheck = "crash";
                         mowerState.setState(constants.MOWER_CRASHED);
                         m_lawnInfo[mowerX][mowerY] = constants.EMPTY_CODE;
-                        mower.finishMove(new Move(mowerState.getDirection(), 0), mowerState.getState(), 0);
+                        mower.finishMove(new Move(mowerState.getDirection(), i-1), mowerState.getState(), 0);
                         return;
                     }
                 }
