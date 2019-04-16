@@ -152,8 +152,7 @@ public class SimMonitor {
             m_maxTurn = Integer.parseInt(tokens[0]);
 
             takeCommand.close();
-            
-            //m_mower = new Mower(mowerDirection);
+
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println();
@@ -250,8 +249,6 @@ public class SimMonitor {
                     SCAN_MAP.get(m_scanResult[5]) + "," +
                     SCAN_MAP.get(m_scanResult[6]) + "," +
                     SCAN_MAP.get(m_scanResult[7]);
-            
-            //displayActionAndResponses();
             return;
         }
         else {
@@ -337,16 +334,10 @@ public class SimMonitor {
                 mower.finishMove(new Move(mowerState.getDirection(), trackMoveDistance), mowerState.getState(), mowerState.getStallTurn());
             }
         } 
-        
-        //displayActionAndResponses();
     }
 
-    public void validateMowerAction() {
-        int xOrientation, yOrientation;
 
-    }
 
-    //TODO: Implement this method.
     public void getPuppyAction() {
         for (int i=0; i < m_puppies.length; ++i) {
             singlePuppy(m_puppies[i], i);
@@ -362,15 +353,14 @@ public class SimMonitor {
     	
     	if(puppy.isStaying()) {
     		trackAction = "stay";
-    		//displayActionAndResponses();
     		return;
     	}
     	
     	Boolean found = false;    	
-    	while(!found){
+    	for(int k = 0; k < 8; ++k){
     		
-	    	Integer move = puppy.getMove();
-	    	String dir = constants.DIRECTIONS[move];
+	    	//Integer move = puppy.getMove();
+	    	String dir = constants.DIRECTIONS[k];
 	    	
 	        int xOrientation = constants.xDIR_MAP.get(dir);
 	        int yOrientation = constants.yDIR_MAP.get(dir);
@@ -427,19 +417,18 @@ public class SimMonitor {
 	        		}
 	        	}
 	        }
-    	}  //end while loop
+	        if(found) {
+	        	break;
+	        }
+    	}
     	
     	//cannot found a valid move, therefore stay 
     	if(!found) {
     		trackAction = "stay";
     	}
-    	//displayActionAndResponses();
     }
 
-    //TODO: Implement this method.
-    public void printFinal(int number) {
 
-    }
 
     public void scanSurrounding(MowerState mowerState){
         
