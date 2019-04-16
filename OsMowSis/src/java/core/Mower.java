@@ -1,7 +1,5 @@
 package core;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Random;
 
 public class Mower extends LawnmowerShared {
@@ -35,7 +33,7 @@ public class Mower extends LawnmowerShared {
     if (knownWidth <= mowerX)
       knownWidth = mowerX + 1;
     grid_observed.updateGrid(mowerX, mowerY, c.MOWER_CODE);
-//    grid_observed.renderLawn();
+    grid_observed.renderLawn();
   }
 
   private boolean nearbysquare(int x, int y, int code){
@@ -87,6 +85,9 @@ public class Mower extends LawnmowerShared {
     int lmowerX = mowerX;
     int lmowerY = mowerY;
     for (max_move = 1; max_move < 3; max_move++){
+      if ((mowerX+max_move*xOrientation) < 0 || (mowerX+max_move*xOrientation) >= grid_observed.getWidth() ||
+              (mowerY+max_move*yOrientation) < 0 || (mowerY+max_move*yOrientation) >= grid_observed.getHeight())
+        break;
       int value = knowledgeMap[mowerX+max_move*xOrientation][mowerY+max_move*yOrientation];
       System.out.println("Current direction: " + direction + ", value: "+c.SQUARES[value]+", move: "+(max_move - 1));
       if(value == c.CRATER_CODE || value == c.FENCE_CODE || value == c.UNKNOWN_CODE || value == c.MOWER_CODE || value == c.PUPPY_MOWER_CODE) {
@@ -120,6 +121,9 @@ public class Mower extends LawnmowerShared {
         posy = lmowerY + 2 * c.yDIR_MAP.get(c.DIRECTIONS[i]);
         posx1 = lmowerX + c.xDIR_MAP.get(c.DIRECTIONS[i]);
         posy1 = lmowerY + c.yDIR_MAP.get(c.DIRECTIONS[i]);
+        if ((posx) < 0 || (posx) >= grid_observed.getWidth() || (posy) < 0 || (posy) >= grid_observed.getHeight())
+          continue;
+        System.out.println("posx: "+posx+" posy: "+posy);
         if ((knowledgeMap[posx][posy] == c.UNKNOWN_CODE || knowledgeMap[posx][posy] == c.GRASS_CODE) & knowledgeMap[posx1][posy1] == c.EMPTY_CODE){
           select[point] = i;
           point++;
@@ -168,7 +172,7 @@ public class Mower extends LawnmowerShared {
     this.mowerY = y;
     if (m.getDirection() != "unknown")
       this.direction = m.getDirection();
-//    grid_observed.renderLawn();
+    grid_observed.renderLawn();
   }
 
   /**
@@ -176,7 +180,7 @@ public class Mower extends LawnmowerShared {
    * It will assign the values for the map starting with North Direction and moving clockwise.
    * @param values
    */
-  public void provideScanResult(Integer[] values) {
+  public void provideScanResult(int[] values) {
     if (values == null || values.length != 8) {
       throw new IllegalArgumentException( "The method 'provideScanResult' needs 8 values and incorrect number were provided " + values);
     }
@@ -189,6 +193,6 @@ public class Mower extends LawnmowerShared {
         knownWidth = x_axis + 1;
       grid_observed.updateGrid(x_axis, y_axis, values[i]);
     }
-//    grid_observed.renderLawn();
+    grid_observed.renderLawn();
   }
 }

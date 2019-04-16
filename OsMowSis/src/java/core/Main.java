@@ -24,7 +24,7 @@ public class Main {
                 //monitor.displayActionAndResponses();
 
                 // REMEMBER to delete or comment out the rendering before submission
-                System.out.println(monitor.printLawnUI());
+//                System.out.println(monitor.printLawnUI());
                 // monitorSim.renderKnownLawn();
 
                 // pause after each event for a given number of seconds

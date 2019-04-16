@@ -11,6 +11,6 @@
     if(action.equals("next")){
         monitor.pollMowerForAction();
         monitor.getPuppyAction();
-        out.println(monitor.printLawnUI());
+        out.println(monitor.renderLawnForUI());
     }
 %>

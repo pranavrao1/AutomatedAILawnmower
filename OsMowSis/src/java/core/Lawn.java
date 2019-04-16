@@ -24,6 +24,8 @@ public class Lawn {
     public int [][] getGrid() {
         return grid;
     }
+    public int getHeight() { return height; }
+    public int getWidth() { return width; }
 
     public int [] getSurroundingSquares(int x, int y) {
         int [] scan_result = new int[8];
@@ -53,7 +55,8 @@ public class Lawn {
         return old_type;
     }
 
-    public int getSquare_type(int x, int y) {
+    public int getSquareType(int x, int y) {
+        System.out.println("getSquareType: x: "+x+", y: "+y);
         return grid[x][y];
     }
 
@@ -76,6 +79,92 @@ public class Lawn {
             System.out.print("--");
         }
         System.out.println("");
+    }
+    
+    public String renderLawnForUI() {
+               int i, j;
+        int charWidth = 2 * width + 2;
+        
+        StringBuilder sb = new StringBuilder();
+    	
+        for (j = height - 1; j >= 0; j--) {  
+            // display the contents of each square on this row
+            for (i = 0; i < width; i++) {
+                sb.append("|");
+                
+                if(grid[i][j] == c.EMPTY_CODE) {
+                    sb.append("  ");
+                }
+                else if(grid[i][j] == c.GRASS_CODE) {
+                    sb.append(" g");
+                }
+                else if(grid[i][j] == c.CRATER_CODE) {
+                    sb.append(" c");
+                }
+                else if(grid[i][j] == c.MOWER_CODE) {
+                    sb.append(" m");
+                }
+                else if(grid[i][j] == c.PUPPY_EMPTY_CODE) {
+                    sb.append("p ");
+                }
+                else if(grid[i][j] == c.PUPPY_MOWER_CODE) {
+                    sb.append("pm");
+                }
+                else if(grid[i][j] == c.PUPPY_GRASS_CODE) {
+                    sb.append("pg");
+                }
+                else if(grid[i][j] == c.FENCE_CODE) {
+                    sb.append(" f");
+                }
+                else if(grid[i][j] == c.UNKNOWN_CODE) {
+                    sb.append("??");
+                }
+            }
+            sb.append("|");
+            sb.append("\n");
+        }
+//        String html = buildHTML(sb.toString());
+//        System.out.println(html);
+        return buildHTML(sb.toString());
+    }
+    
+        public String buildHTML(String lawn){
+            
+        StringBuilder sb = new StringBuilder();
+        sb.append("<table>");
+        String[] lines = lawn.split("\n");
+
+        for(String line:lines){
+            sb.append("<tr>");
+            String[] spots = line.split("\\|");
+            for(String spot:spots){
+                if(spot.equals(""))
+                    continue;
+                sb.append("<td>");
+                String img = "<img src=\"";
+                if(spot.equals("  ")){
+                    img += "image/cut.png";
+                }else if(spot.equals(" g")){
+                    img += "image/grass.png";
+                }else if(spot.equals(" c")){
+                    img += "image/crater.png";
+                }else if(spot.equals(" m")){
+                    img += "image/mower_n.png";
+                }else if(spot.equals("p ")){
+                    img += "image/cut_puppy.png";
+                }else if(spot.equals("pm")){
+                    img += "image/mower_puppy.png";
+                }else if(spot.equals("pg")){
+                    img += "image/grass_puppy.png";
+                }
+                img += "\" class=\"spot\" />";
+                sb.append(img);
+                sb.append("</td>");
+            }
+            sb.append("</tr>");
+        }
+        sb.append("</table>");
+        return sb.toString();
     }
 
     public void renderLawn() {
