@@ -12,7 +12,8 @@ public class Main {
 
             // run the simulation for a fixed number of steps
             int turns = 0;
-            for(; turns < 50 & !monitor.stopRun(); turns++) {
+            Integer maxTurn = monitor.getMaxTurn();
+            for(; turns < maxTurn & !monitor.stopRun(); turns++) {
                 monitor.pollMowerForAction();
                 //monitor.validateMowerAction();
                 monitor.getPuppyAction();
@@ -32,7 +33,7 @@ public class Main {
                 }
             }
             //monitorSim.renderLawn();
-            monitor.printFinal(turns);
+            monitor.printFinalReport();
         }
     }
 

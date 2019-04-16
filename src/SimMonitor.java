@@ -115,7 +115,7 @@ public class SimMonitor {
                 // mow the grass at the initial location
                 x = Integer.parseInt(tokens[0]);
                 y = Integer.parseInt(tokens[1]);
-                m_lawnInfo[x][y] = constants.EMPTY_CODE;
+                m_lawnInfo[x][y] = constants.MOWER_CODE;
                 
                 m_mowerState[k] = new MowerState(x,y,mowerDirection);
                 m_mowers[k] = new Mower(x,y,mowerDirection,k);
@@ -510,7 +510,10 @@ public class SimMonitor {
         int total = 0;
             for (int i = 0; i < m_lawnWidth; i++) {
                 for (int j = 0; j < m_lawnHeight; j++) {
-                    if(m_lawnInfo[i][j] == constants.EMPTY_CODE)
+                    if(m_lawnInfo[i][j] == constants.EMPTY_CODE
+                    		|| m_lawnInfo[i][j] == constants.PUPPY_EMPTY_CODE
+                    		|| m_lawnInfo[i][j] == constants.PUPPY_MOWER_CODE
+                    		|| m_lawnInfo[i][j] == constants.MOWER_CODE)
                     {
                         total++;
                     }
@@ -585,6 +588,10 @@ public class SimMonitor {
     }
 
 
+    public Integer getMaxTurn() {
+        return m_maxTurn;
+    }
+    
     //TODO: Implement Stop run
     public boolean stopRun() {
         return m_stopRun;
