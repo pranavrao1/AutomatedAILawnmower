@@ -95,10 +95,6 @@ public class Lawn {
         StringBuilder sb = new StringBuilder();
     	
         for (j = lawnHeight - 1; j >= 0; j--) {  
-
-            // display the Y-direction identifier
-//            sb.append(j);
-
             // display the contents of each square on this row
             for (i = 0; i < lawnWidth; i++) {
                 sb.append("|");

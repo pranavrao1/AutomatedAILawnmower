@@ -1,15 +1,15 @@
 
 <%@page import="sun.misc.IOUtils"%>
 <%@page import="java.nio.file.StandardCopyOption"%>
-<%@page import="Backend.*"%>
+<%@page import="core.*"%>
 <%@ page import="java.io.*"%>
 <%        
     String saveFile = "";
     String contentType = request.getContentType();
     String map = "";
     if ((contentType != null) && (contentType.indexOf("multipart/form-data") >= 0)) {
-        Simulator monitorSim = new Simulator();
-        map = monitorSim.uploadStartingFile(request.getInputStream());
+        SimMonitor monitor = new SimMonitor();
+        map = monitor.uploadStartingFileUI(request.getInputStream());
     }
 %>
 <html>
@@ -65,8 +65,8 @@
                 <td>
                     <table style="width:780px; height:700px; border: 1px solid #aaaaaa;">
                         <tr>
-                            <td>
-                                <div id="lawnMap">
+                            <td style="vertical-align: text-top;">
+                                <div style="float: top" id="lawnMap">
                                     <% out.print(map); %>
                                 </div>
                             </td>

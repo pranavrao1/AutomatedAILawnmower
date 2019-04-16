@@ -3,12 +3,14 @@
     Created on : Apr 15, 2019, 11:46:58 AM
     Author     : parby02
 --%>
-<%@page import="Backend.*"%>
+<%@page import="core.*"%>
 <%
     String action = request.getParameter("action");
-    Simulator sim = Simulator.getInstance();
+    SimMonitor monitor = SimMonitor.getInstance();
     
     if(action.equals("next")){
-        out.println(sim.pollMowerForAction());
+        monitor.pollMowerForAction();
+        monitor.getPuppyAction();
+        out.println(monitor.printLawnUI());
     }
 %>
