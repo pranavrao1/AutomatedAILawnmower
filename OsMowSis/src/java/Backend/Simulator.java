@@ -1,15 +1,21 @@
 package Backend;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 public class Simulator {
 
 	private Lawn lawn;
+        private static Simulator instance;
 	private Constants code;
 	// private Mower mower;
 	private int absX;
@@ -19,18 +25,28 @@ public class Simulator {
 	private boolean isTerminated;
 	private MowingService ms;
 	private boolean submit = true;
-
+        boolean fileUploaded = false;
+        
+        public static synchronized Simulator getInstance(){
+            if(instance == null){
+                instance = new Simulator();
+            }
+            return instance;
+        }
+        
 	public Simulator() {
-		lawn = new Lawn();
-		code = new Constants();
-		isTerminated = false;
-		ms = new MowingService();
-                System.out.println("started");
+            lawn = new Lawn();
+            code = new Constants();
+            isTerminated = false;
+            ms = new MowingService();
+            instance = this;
+            System.out.println("started");
 	}
-
-	public String uploadStartingFile(InputStream is) {
+            
+	public String uploadStartingFile(InputStream is){
 
             final String DELIMITER = ",";
+            
 
             try {
                 BufferedReader takeCommand = new BufferedReader(new InputStreamReader(is,"UTF-8"));
@@ -89,87 +105,19 @@ public class Simulator {
 
             } catch (Exception e) {
                     e.printStackTrace();
-                    System.out.println();
             }
-//            System.out.print(createLanwHTML(lawn.renderLawn(ms.getMower())));
             return createLanwHTML(lawn.renderLawn(ms.getMower()));
 	}
-//        public void uploadStartingFile(String testFileName) {
-//
-//		final String DELIMITER = ",";
-//
-//		try {
-//			Scanner takeCommand = new Scanner(new File(testFileName));
-//			String[] tokens;
-//			int k;
-//			System.out.println(takeCommand);
-//			// read in the lawn information
-////			System.out.println("aaaaa: "+takeCommand.nextLine());
-//			tokens = takeCommand.nextLine().split(DELIMITER);
-//			int w = Integer.parseInt(tokens[0]);
-//			lawn.setLawnWidth(w);
-//
-//			tokens = takeCommand.nextLine().split(DELIMITER);
-//			int h = Integer.parseInt(tokens[0]);
-//			lawn.setLawnHeight(h);
-//
-//			lawnWidth = w;
-//			lawnHeight = h;
-//
-//			// generate the lawn information
-//			lawn.initLawnInfo();
-//
-//			// read in the lawnmower starting information
-//			tokens = takeCommand.nextLine().split(DELIMITER);
-//
-//			// Number of mower will be always 1 for this assignment.
-//			int numMowers = Integer.parseInt(tokens[0]);
-//
-//			for (k = 0; k < numMowers; k++) {
-//				tokens = takeCommand.nextLine().split(DELIMITER);
-//				// Only Simulator knows the init position of the mower
-//				absX = Integer.valueOf(tokens[0]);
-//				absY = Integer.valueOf(tokens[1]);
-//				ms.setMowerDirec(tokens[2]);
-//
-//				// mow the grass at the initial location
-//				ms.setMowerAbs(absX, absY);
-//				lawn.setLawnInfo(absX, absY, code.EMPTY_CODE);
-//			}
-//
-//			// read in the crater information
-//			tokens = takeCommand.nextLine().split(DELIMITER);
-//			int numCraters = Integer.parseInt(tokens[0]);
-//			lawn.initTotals(numCraters);
-//
-//			for (k = 0; k < numCraters; k++) {
-//				tokens = takeCommand.nextLine().split(DELIMITER);
-//				lawn.setLawnInfo(Integer.parseInt(tokens[0]), Integer.parseInt(tokens[1]), code.CRATER_CODE);
-//			}
-//
-//			takeCommand.close();
-//
-////			 System.out.print);
-//createLanwHTML(lawn.renderLawn(ms.getMower()));
-//
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//			System.out.println();
-//		}
-//	}
-
+        
         public String createLanwHTML(String lawn){
             
             StringBuilder sb = new StringBuilder();
             sb.append("<table>");
             String[] lines = lawn.split("\n");
             
-//            System.out.print(lines.length);
             for(String line:lines){
-//                System.out.println(line);
                 sb.append("<tr>");
                 String[] spots = line.split("|");
-//                spots = line.split(" ");
                 for(String spot:spots){
                     if(spot.equals("|"))
                         continue;
@@ -192,10 +140,10 @@ public class Simulator {
                 sb.append("</tr>");
             }
             sb.append("</table>");
-            System.out.print(sb.toString());
             return sb.toString();
         }
-	public void pollMowerForAction() {
+	public String pollMowerForAction() {
+            
 		String[] newMowerAction = ms.findNextAction(); // {action,steps,direction}
 		if (newMowerAction[0].equals("done")) {
 			if (submit) {
@@ -212,7 +160,7 @@ public class Simulator {
 
 			lawn.increaseTotalAction();
 		}
-
+                return createLanwHTML(lawn.renderLawn(ms.getMower()));
 	}
 
 	public void validateMowerActionAndUpdateLawn(Mower mower, String[] newMowerAction) {
@@ -222,12 +170,10 @@ public class Simulator {
         String printResult = "";
         
         if (action.equals("scan")) {
-            // in the case of a scan, return the information for the eight surrounding squares
-            // always use a northbound orientation
         	printAction = "scan";
         	if(submit){
-        		System.out.println("scan");
-            	System.out.println(scan(mower));
+                    System.out.println("scan");
+                    System.out.println(scan(mower));
         	}else{
         		scan(mower);
         	}
@@ -347,32 +293,13 @@ public class Simulator {
 	public boolean getIsTerminated() {
 		if (ms.isDone()) {
 			if(submit){
-				System.out.println("turn_off");
-				System.out.println("ok");
+                            System.out.println("turn_off");
+                            System.out.println("ok");
 			}
 			return true;
 		}
 		return isTerminated;
 	}
-
-	// public void displayActionAndResponses() {
-	// // display the mower's actions
-	// System.out.print(trackAction);
-	// if (trackAction.equals("move")) {
-	// System.out.println("," + trackMoveDistance + "," + trackNewDirection);
-	// } else {
-	// System.out.println();
-	// }
-	//
-	// // display the simulation checks and/or responses
-	// if (trackAction.equals("move") | trackAction.equals("turn_off")) {
-	// System.out.println(trackMoveCheck);
-	// } else if (trackAction.equals("scan")) {
-	// System.out.println(trackScanResults);
-	// } else {
-	// System.out.println("action not recognized");
-	// }
-	// }
 
 	public void printFinalReport() {
 		System.out.println(lawn.print());

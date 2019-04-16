@@ -32,9 +32,9 @@ public class MowingService {
 	}
 	public String[] findNextAction(){
 		String[] action = new String[3]; //action,steps,direction;
-		
+		System.out.println("mowers " + mower==null);
 		String direc = mower.getDirec();
-//		System.out.println(direc);
+		
 		String location = (mower.getX() + code.xDIR_MAP.get(direc))+","+ (mower.getY() + code.yDIR_MAP.get(direc));
 		
 		int step = 0;

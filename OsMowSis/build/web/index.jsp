@@ -1,15 +1,8 @@
 
 <%@page import="sun.misc.IOUtils"%>
 <%@page import="java.nio.file.StandardCopyOption"%>
-<%@page import="Backend.Simulator"%>
+<%@page import="Backend.*"%>
 <%@ page import="java.io.*"%>
-<html>
-<head>
-<title>A6-60 OsMowSis</title>
-<link rel="stylesheet" href="styles.css">
-</head>
-<body bgcolor=white>
-    
 <%        
     String saveFile = "";
     String contentType = request.getContentType();
@@ -17,10 +10,35 @@
     if ((contentType != null) && (contentType.indexOf("multipart/form-data") >= 0)) {
         Simulator monitorSim = new Simulator();
         map = monitorSim.uploadStartingFile(request.getInputStream());
-        
     }
-    
 %>
+<html>
+<head>
+    <meta charset="utf-8" />
+<title>A6-60 OsMowSis</title>
+<link rel="stylesheet" href="styles.css">
+<script src="jQuery.js"></script>
+</head>
+<body bgcolor=white>
+<script>
+        $(document).ready(function() {
+            $('#next').click(function (){
+                $.ajax({
+                    type: "POST",
+                    url: "services.jsp", 
+                    data: "action=next",
+                    enctype: "text/plain",
+                    error:function(){
+                        alert("error occured!!!");
+                    },
+                    success: function(msg){    
+                        $("#lawnMap").empty();
+                        $("#lawnMap").append(msg);
+                    }
+                });
+            });
+        });
+</script>
 <table class="borderline centered" style="width: 1200px; height: 800px;">
 <tr style="height: 40px;">
     <td colspan="2">
@@ -48,7 +66,9 @@
                     <table style="width:780px; height:700px; border: 1px solid #aaaaaa;">
                         <tr>
                             <td>
-                                <% out.print(map); %>
+                                <div id="lawnMap">
+                                    <% out.print(map); %>
+                                </div>
                             </td>
                         </tr>
                     </table>
@@ -56,9 +76,12 @@
             </tr>
             <tr>
                 <td>
+                    <form ENCTYPE="plain/text" action="#">
+                        <button type="submit" id="next" value="next">NEXT</button>
+                        <button type="submit" value="stop">STOP</button>
+                    </form>
                     <div style="margin: auto; width: 120px; display:flex;">
-                        <button type="button" onclick="">START</button>
-                        <button type="button" onclick=")">STOP</button>
+                        
                     </div>
                     
                 </td>

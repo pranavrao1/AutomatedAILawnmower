@@ -2,13 +2,20 @@ package Backend;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
 public class Main {
-
+        public Simulator monitorSim;
+        public Main(){};
+        
+        public Simulator getSimulator(){
+            return monitorSim;
+        }
+        
 	public static void main(String[] args) throws FileNotFoundException, UnsupportedEncodingException, IOException {
 
-//		Simulator monitorSim = new Simulator();
+//		
 //		if (args.length == 0) {
 //			System.out.println("ERROR: Test scenario file name not found.");
 //		} else {
@@ -23,8 +30,8 @@ public class Main {
 //			monitorSim.printFinalReport();
 //		}
 
-		Simulator monitorSim = new Simulator();
-		String path = "/Users/parby02/temp/scenario1.csv";
+//		Simulator monitorSim = new Simulator();
+//		String path = "/Users/parby02/temp/scenario1.csv";
 
 //                final File initialFile = new File(path);
 //                final InputStream targetStream = new DataInputStream(new FileInputStream(initialFile));
@@ -33,7 +40,7 @@ public class Main {
 //      while(line!=null){
 //          System.out.println(line);
 //      }
-//		monitorSim.uploadStartingFile(path);
+//		monitorSim.uploadStartingFile();
 //
 //		for (int turns = 0; turns < 3000; turns++) {
 //			monitorSim.pollMowerForAction();
