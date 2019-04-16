@@ -12,15 +12,15 @@ public class Main {
 
             // run the simulation for a fixed number of steps
             int turns = 0;
-            for(; turns < 100 & !monitor.stopRun(); turns++) {
+            for(; turns < 50 & !monitor.stopRun(); turns++) {
                 monitor.pollMowerForAction();
                 //monitor.validateMowerAction();
                 monitor.getPuppyAction();
                 
-                monitor.displayActionAndResponses();
+                //monitor.displayActionAndResponses();
 
                 // REMEMBER to delete or comment out the rendering before submission
-                // monitorSim.renderLawn();
+                monitor.renderLawn();
                 // monitorSim.renderKnownLawn();
 
                 // pause after each event for a given number of seconds
