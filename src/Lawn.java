@@ -22,6 +22,8 @@ public class Lawn {
     public int [][] getGrid() {
         return grid;
     }
+    public int getHeight() { return height; }
+    public int getWidth() { return width; }
 
     public int [] getSurroundingSquares(int x, int y) {
         int [] scan_result = new int[8];
@@ -51,7 +53,8 @@ public class Lawn {
         return old_type;
     }
 
-    public int getSquare_type(int x, int y) {
+    public int getSquareType(int x, int y) {
+        System.out.println("getSquareType: x: "+x+", y: "+y);
         return grid[x][y];
     }
 
