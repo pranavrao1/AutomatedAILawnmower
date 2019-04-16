@@ -26,16 +26,18 @@ public class Mower extends LawnmowerShared {
     trackMoveDistance = 0;
     trackNewDirection = dir;
     if(grid_observed == null){
-      grid_observed = new Lawn(c.DEFAULT_WIDTH + 2,c.DEFAULT_HEIGHT + 2,c.UNKNOWN_CODE);
+      grid_observed = new Lawn(c.DEFAULT_WIDTH + 2,c.DEFAULT_HEIGHT + 2, c.UNKNOWN_CODE);
     }
     if (knownHeight <= mowerY)
       knownHeight = mowerY + 1;
     if (knownWidth <= mowerX)
       knownWidth = mowerX + 1;
+    grid_observed.updateGrid(mowerX, mowerY, c.MOWER_CODE);
+    grid_observed.renderLawn();
   }
 
-  private boolean nearbysquare(int code){
-    int [] local_map_scan = grid_observed.getSurroundingSquares(mowerX, mowerY);
+  private boolean nearbysquare(int x, int y, int code){
+    int [] local_map_scan = grid_observed.getSurroundingSquares(x, y);
     for (int i : local_map_scan)
     {
       if (i == code){
@@ -45,8 +47,8 @@ public class Mower extends LawnmowerShared {
     return false;
   }
 
-  private String find_rand_direction(int code){
-    int [] local_map_scan = grid_observed.getSurroundingSquares(mowerX, mowerY);
+  private String find_rand_direction(int x, int y, int code){
+    int [] local_map_scan = grid_observed.getSurroundingSquares(x, y);
     int [] all_values = new int[8];
     int point = 0;
     for(int i =0; i< 8; i++){
@@ -67,7 +69,7 @@ public class Mower extends LawnmowerShared {
       return mowerAction;
     }
     // check if surrounding square is unknown
-    if (nearbysquare(c.UNKNOWN_CODE)) {
+    if (nearbysquare(mowerX, mowerY, c.UNKNOWN_CODE)) {
       mowerAction = "scan";
       return mowerAction;
     }
@@ -82,14 +84,15 @@ public class Mower extends LawnmowerShared {
     int yOrientation = c.yDIR_MAP.get(direction);
     int lmowerX = mowerX;
     int lmowerY = mowerY;
-    for (max_move = 0; max_move < 2; max_move++){
-      int value =knowledgeMap[mowerX+max_move*xOrientation][mowerY+max_move*yOrientation];
+    for (max_move = 1; max_move < 3; max_move++){
+      int value = knowledgeMap[mowerX+max_move*xOrientation][mowerY+max_move*yOrientation];
+      System.out.println("Current direction: " + direction + ", value: "+c.SQUARES[value]+", move: "+(max_move - 1));
       if(value == c.CRATER_CODE || value == c.FENCE_CODE || value == c.UNKNOWN_CODE || value == c.MOWER_CODE || value == c.PUPPY_MOWER_CODE) {
         break;
       }
     }
-    trackMoveDistance = max_move-1;
-    //System.out.println(trackMoveDistance);
+    trackMoveDistance = max_move - 1;
+    //System.out.println("Current direction: " + direction + trackMoveDistance);
 
 
     /*
@@ -101,11 +104,11 @@ public class Mower extends LawnmowerShared {
 
     // direction:
     // check if around grass, if so, randomly pick grass
-    if (nearbysquare(c.GRASS_CODE)) {
-      trackNewDirection = find_rand_direction(c.GRASS_CODE);
+    if (nearbysquare(lmowerX, lmowerY, c.GRASS_CODE)) {
+      trackNewDirection = find_rand_direction(lmowerX, lmowerY, c.GRASS_CODE);
     }
     // else randomly pick an empty space.
-    else if(nearbysquare(c.EMPTY_CODE)){
+    else if(nearbysquare(lmowerX, lmowerY, c.EMPTY_CODE)){
       // find a way to get to green or Unknown square
       int posx, posy, posx1, posy1;
       int[] select = new int[8];
@@ -121,7 +124,7 @@ public class Mower extends LawnmowerShared {
         }
       }
       if (point == 0){
-        trackNewDirection = find_rand_direction(c.EMPTY_CODE);
+        trackNewDirection = find_rand_direction(lmowerX, lmowerY, c.EMPTY_CODE);
       }else{
         trackNewDirection = c.DIRECTIONS[select[randGenerator.nextInt(point)]];
       }
@@ -163,6 +166,7 @@ public class Mower extends LawnmowerShared {
     this.mowerY = y;
     if (m.getDirection() != "unknown")
       this.direction = m.getDirection();
+    grid_observed.renderLawn();
   }
 
   /**
@@ -183,5 +187,6 @@ public class Mower extends LawnmowerShared {
         knownWidth = x_axis + 1;
       grid_observed.updateGrid(x_axis, y_axis, values[i]);
     }
+    grid_observed.renderLawn();
   }
 }
