@@ -183,7 +183,19 @@ public class SimMonitor {
         
         //If not , continue simulations , poll each mower
         for (int i=0; i < m_mowers.length; ++i) {
+        	
+        	boolean skipDisplay = false;
+        	if(m_mowerState[i].getState() == constants.MOWER_OFF 
+        			|| m_mowerState[i].getState() == constants.MOWER_CRASHED
+        		    || m_mowerState[i].getState() == constants.MOWER_STALLED){
+        		skipDisplay = true;
+        	}
+        	
             singleMower(m_mowers[i], m_mowerState[i], i);
+            
+            if(!skipDisplay) {
+            	displayActionAndResponses();
+            }
         }
     }
 
@@ -238,6 +250,8 @@ public class SimMonitor {
                     SCAN_MAP.get(m_scanResult[5]) + "," +
                     SCAN_MAP.get(m_scanResult[6]) + "," +
                     SCAN_MAP.get(m_scanResult[7]);
+            
+            //displayActionAndResponses();
             return;
         }
         else {
@@ -259,8 +273,6 @@ public class SimMonitor {
             else if(trackMoveDistance > 0 && trackMoveDistance <= 2) {
                 int xOrientation = constants.xDIR_MAP.get(mowerState.getDirection());
                 int yOrientation = constants.yDIR_MAP.get(mowerState.getDirection());
-
-                //mowerDirection = trackNewDirection;
 
                 int mowerX = mowerState.getX();     //original X
                 int mowerY = mowerState.getY();     //original Y
@@ -326,7 +338,7 @@ public class SimMonitor {
             }
         } 
         
-        displayActionAndResponses();
+        //displayActionAndResponses();
     }
 
     public void validateMowerAction() {
@@ -338,6 +350,7 @@ public class SimMonitor {
     public void getPuppyAction() {
         for (int i=0; i < m_puppies.length; ++i) {
             singlePuppy(m_puppies[i], i);
+            displayActionAndResponses();
         }
     }
     
@@ -349,7 +362,7 @@ public class SimMonitor {
     	
     	if(puppy.isStaying()) {
     		trackAction = "stay";
-    		displayActionAndResponses();
+    		//displayActionAndResponses();
     		return;
     	}
     	
@@ -420,7 +433,7 @@ public class SimMonitor {
     	if(!found) {
     		trackAction = "stay";
     	}
-    	displayActionAndResponses();
+    	//displayActionAndResponses();
     }
 
     //TODO: Implement this method.
