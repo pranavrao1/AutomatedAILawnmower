@@ -64,7 +64,7 @@ public class Mower extends LawnmowerShared {
   //TODO: Implement this method.
   public String getNextAction() {
     // should I turn off?
-    if(surroundedByFence(this.mowerX, this.mowerY)){
+    if(surroundedByFence()){
       //System.out.println("Turn off");
       mowerAction = "turn_off";
       return mowerAction;

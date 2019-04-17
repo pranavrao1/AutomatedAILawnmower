@@ -241,7 +241,7 @@ public class SimMonitor {
         ++m_turn;
         Boolean continueSimulation = false;
         for (int i=0; i < m_mowerState.length; ++i) {
-            if(m_mowerState[i].getState() != constants.MOWER_OFF || m_mowerState[i].getState() != constants.MOWER_CRASHED){
+            if(m_mowerState[i].getState() != constants.MOWER_OFF && m_mowerState[i].getState() != constants.MOWER_CRASHED){
                 continueSimulation = true;
                 break;
             }
