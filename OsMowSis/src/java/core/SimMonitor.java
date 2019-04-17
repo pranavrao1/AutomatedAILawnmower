@@ -46,6 +46,8 @@ public class SimMonitor {
     private Integer m_collisionDelay;
     private Integer m_stayPercent;
     private boolean m_stopRun;
+    
+    public int indexForNextBtn = 0;
 
     public static synchronized SimMonitor getInstance(){
         if(instance == null){
@@ -77,7 +79,7 @@ public class SimMonitor {
         SCAN_MAP.put(constants.PUPPY_GRASS_CODE, "puppy_grass");
         SCAN_MAP.put(constants.PUPPY_MOWER_CODE, "puppy_mower");
         LawnmowerShared.grid_observed = null;
-        
+        indexForNextBtn = 0;
         instance = this;
     }
 
@@ -162,8 +164,13 @@ public class SimMonitor {
 
         try {
             BufferedReader takeCommand = new BufferedReader(new InputStreamReader(is,"UTF-8"));
-            while(takeCommand.readLine().length()>1);
-
+            
+            //remove information lines
+            takeCommand.readLine();
+            takeCommand.readLine();
+            takeCommand.readLine();
+            takeCommand.readLine();
+            
             String[] tokens;
             int i, j, k , x, y;
 
@@ -231,7 +238,7 @@ public class SimMonitor {
 
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println();
+            System.out.println("error");
         }
         return renderLawnForUI();
 

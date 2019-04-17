@@ -3,21 +3,9 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/Users/parby02/newShare/assign6/OsMowSis/src/java/newBack/SimDriver.java</file>
-            <file>file:/Users/parby02/newShare/assign6/OsMowSis/src/java/Backend/MowingService.java</file>
             <file>file:/Users/parby02/newShare/assign6/OsMowSis/web/index.jsp</file>
-            <file>file:/Users/parby02/newShare/assign6/OsMowSis/src/java/newBack/Puppy.java</file>
-            <file>file:/Users/parby02/newShare/assign6/OsMowSis/src/java/newBack/Constants.java</file>
-            <file>file:/Users/parby02/newShare/assign6/OsMowSis/src/java/newBack/MowerState.java</file>
-            <file>file:/Users/parby02/newShare/assign6/OsMowSis/src/java/newBack/SimMonitor.java</file>
-            <file>file:/Users/parby02/newShare/assign6/OsMowSis/src/java/newBack/Move.java</file>
-            <file>file:/Users/parby02/newShare/assign6/OsMowSis/web/next.jsp</file>
-            <file>file:/Users/parby02/newShare/assign6/OsMowSis/src/java/newBack/Main.java</file>
-            <file>file:/Users/parby02/newShare/assign6/OsMowSis/src/java/Backend/Simulator.java</file>
-            <file>file:/Users/parby02/newShare/assign6/OsMowSis/src/java/newBack/LawnmowerShared.java</file>
-            <file>file:/Users/parby02/newShare/assign6/OsMowSis/src/java/newBack/Lawn.java</file>
-            <file>file:/Users/parby02/newShare/assign6/OsMowSis/src/java/newBack/Mower.java</file>
-            <file>file:/Users/parby02/newShare/assign6/OsMowSis/src/java/Backend/Main.java</file>
+            <file>file:/Users/parby02/newShare/assign6/OsMowSis/web/services.jsp</file>
+            <file>file:/Users/parby02/newShare/assign6/OsMowSis/src/java/core/SimMonitor.java</file>
         </group>
     </open-files>
 </project-private>
