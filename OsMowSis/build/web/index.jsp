@@ -31,9 +31,29 @@
                     error:function(){
                         alert("error occured!!!");
                     },
-                    success: function(msg){    
-                        $("#lawnMap").empty();
-                        $("#lawnMap").append(msg);
+                    success: function(json){    
+                        
+                        if(json.done!=null){
+                            $("#log").append(json.done);
+                            var result = json.done;
+                            var s =  result.split(",");
+                            var msg = "WE ARE DONE!!!!" + "\n";
+                            msg = "Lawn size: " + s[0] + "\n";
+                            msg += "Grass area: "+ s[1] + "\n";
+                            msg += "Total cut: "+ s[2] + "\n";
+                            msg += "Number of turns: "+ s[3] + "\n";
+                            alert(msg);
+                        }else{
+                            var logHTML = "<div class='oneRound'>";
+                            $.each(json, function(){
+                                $("#lawnMap").empty();
+                                $("#lawnMap").append(this['html']);
+                                logHTML += this['log'];
+                            });
+                            logHTML += "</div>";
+                            $("#log").append(logHTML);
+                        }
+                        
                     }
                 });
             });
@@ -76,14 +96,9 @@
             </tr>
             <tr>
                 <td>
-                    <form ENCTYPE="plain/text" action="#">
-                        <button type="submit" id="next" value="next">NEXT</button>
-                        <button type="submit" value="stop">STOP</button>
+                    <form ENCTYPE="plain/text" action="#" style="margin: 0 auto; display: table;">
+                        <button class="bigBtn" type="submit" id="next" value="next">NEXT</button>
                     </form>
-                    <div style="margin: auto; width: 120px; display:flex;">
-                        
-                    </div>
-                    
                 </td>
             </tr>
         </table>
@@ -92,13 +107,13 @@
         <table>
             <tr>
                 <td>
-                    <div class="borderline" style="width:370px; height:700px;"></div>
+                    <div id="log" class="borderline logDiv"></div>
                 </td>
             </tr>
             <tr>
                 <td>
                      <div style="margin: auto; width: 120px;">
-                        <button type="button" onclick="">EXPORT LOG</button>
+                        <button class="bigBtn" type="button" onclick="">EXPORT LOG</button>
                     </div>
                 </td>
             </tr>

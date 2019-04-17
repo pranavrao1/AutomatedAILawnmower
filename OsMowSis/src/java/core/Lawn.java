@@ -1,8 +1,5 @@
 package core;
 
-import java.util.Arrays;
-import java.util.List;
-
 public class Lawn {
     private int height;
     private int width;
@@ -56,7 +53,7 @@ public class Lawn {
     }
 
     public int getSquareType(int x, int y) {
-        System.out.println("getSquareType: x: "+x+", y: "+y);
+//        System.out.println("getSquareType: x: "+x+", y: "+y);
         return grid[x][y];
     }
 
@@ -72,17 +69,10 @@ public class Lawn {
         }
         return m;
     }
-
-    private void renderHorizontalBar(int size) {
-        System.out.print(" ");
-        for (int k = 0; k < size; k++) {
-            System.out.print("--");
-        }
-        System.out.println("");
-    }
     
     public String renderLawnForUI() {
-               int i, j;
+        
+        int i, j;
         int charWidth = 2 * width + 2;
         
         StringBuilder sb = new StringBuilder();
@@ -123,109 +113,77 @@ public class Lawn {
             sb.append("|");
             sb.append("\n");
         }
-//        String html = buildHTML(sb.toString());
-//        System.out.println(html);
-        return buildHTML(sb.toString());
-    }
-    
-        public String buildHTML(String lawn){
-            
-        StringBuilder sb = new StringBuilder();
-        sb.append("<table>");
-        String[] lines = lawn.split("\n");
-
-        for(String line:lines){
-            sb.append("<tr>");
-            String[] spots = line.split("\\|");
-            for(String spot:spots){
-                if(spot.equals(""))
-                    continue;
-                sb.append("<td>");
-                String img = "<img src=\"";
-                if(spot.equals("  ")){
-                    img += "image/cut.png";
-                }else if(spot.equals(" g")){
-                    img += "image/grass.png";
-                }else if(spot.equals(" c")){
-                    img += "image/crater.png";
-                }else if(spot.equals(" m")){
-                    img += "image/mower_n.png";
-                }else if(spot.equals("p ")){
-                    img += "image/cut_puppy.png";
-                }else if(spot.equals("pm")){
-                    img += "image/mower_puppy.png";
-                }else if(spot.equals("pg")){
-                    img += "image/grass_puppy.png";
-                }
-                img += "\" class=\"spot\" />";
-                sb.append(img);
-                sb.append("</td>");
-            }
-            sb.append("</tr>");
-        }
-        sb.append("</table>");
         return sb.toString();
     }
-
+    
+    
+//    private void renderHorizontalBar(int size) {
+//        System.out.print(" ");
+//        for (int k = 0; k < size; k++) {
+//            System.out.print("--");
+//        }
+//        System.out.println("");
+//    }
+    
     public void renderLawn() {
-        int i, j;
-        int charWidth = 2 * width + 2;
-
-        // display the rows of the lawn from top to bottom
-        for (j = height - 1; j >= 0; j--) {
-            renderHorizontalBar(charWidth);
-
-            // display the Y-direction identifier
-            System.out.print(String.format("%02d", j));
-
-            // display the contents of each square on this row
-            for (i = 0; i < width; i++) {
-                System.out.print("|");
-
-
-                if(grid[i][j] == c.EMPTY_CODE) {
-                    System.out.print("  ");
-                }
-                else if(grid[i][j] == c.GRASS_CODE) {
-                    System.out.print(" g");
-                }
-                else if(grid[i][j] == c.CRATER_CODE) {
-                    System.out.print(" c");
-                }
-                else if(grid[i][j] == c.MOWER_CODE) {
-                    System.out.print(" m");
-                }
-                else if(grid[i][j] == c.PUPPY_EMPTY_CODE) {
-                    System.out.print("p ");
-                }
-                else if(grid[i][j] == c.PUPPY_MOWER_CODE) {
-                    System.out.print("pm");
-                }
-                else if(grid[i][j] == c.PUPPY_GRASS_CODE) {
-                    System.out.print("pg");
-                }
-                else if(grid[i][j] == c.FENCE_CODE) {
-                    System.out.print(" f");
-                }
-                else if(grid[i][j] == c.UNKNOWN_CODE) {
-                    System.out.print("??");
-                }
-
-            }
-            System.out.println("|");
-        }
-        renderHorizontalBar(charWidth);
-
-        // display the column X-direction identifiers
-        System.out.print(" ");
-        for (i = 0; i < width; i++) {
-            System.out.print("  " + i);
-        }
-        System.out.println("");
-
-        // display the mower's direction
-        //System.out.println("dir: " + mowerDirection);
-        System.out.println("");
+//        int i, j;
+//        int charWidth = 2 * width + 2;
+//
+//        // display the rows of the lawn from top to bottom
+//        for (j = height - 1; j >= 0; j--) {
+//            renderHorizontalBar(charWidth);
+//
+//            // display the Y-direction identifier
+//            System.out.print(String.format("%02d", j));
+//
+//            // display the contents of each square on this row
+//            for (i = 0; i < width; i++) {
+//                System.out.print("|");
+//
+//
+//                if(grid[i][j] == c.EMPTY_CODE) {
+//                    System.out.print("  ");
+//                }
+//                else if(grid[i][j] == c.GRASS_CODE) {
+//                    System.out.print(" g");
+//                }
+//                else if(grid[i][j] == c.CRATER_CODE) {
+//                    System.out.print(" c");
+//                }
+//                else if(grid[i][j] == c.MOWER_CODE) {
+//                    System.out.print(" m");
+//                }
+//                else if(grid[i][j] == c.PUPPY_EMPTY_CODE) {
+//                    System.out.print("p ");
+//                }
+//                else if(grid[i][j] == c.PUPPY_MOWER_CODE) {
+//                    System.out.print("pm");
+//                }
+//                else if(grid[i][j] == c.PUPPY_GRASS_CODE) {
+//                    System.out.print("pg");
+//                }
+//                else if(grid[i][j] == c.FENCE_CODE) {
+//                    System.out.print(" f");
+//                }
+//                else if(grid[i][j] == c.UNKNOWN_CODE) {
+//                    System.out.print("??");
+//                }
+//
+//            }
+//            System.out.println("|");
+//        }
+//        renderHorizontalBar(charWidth);
+//
+//        // display the column X-direction identifiers
+//        System.out.print(" ");
+//        for (i = 0; i < width; i++) {
+//            System.out.print("  " + i);
+//        }
+//        System.out.println("");
+//
+//        // display the mower's direction
+//        //System.out.println("dir: " + mowerDirection);
+//        System.out.println("");
     }
 
 }

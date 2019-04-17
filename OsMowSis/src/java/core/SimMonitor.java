@@ -27,7 +27,7 @@ public class SimMonitor {
     private Constants constants;
 
     private Lawn lawnInfo;
-    private Integer[] m_scanResult;
+    private int[] m_scanResult;
 
     private String  trackLawnObject;
     private Integer trackLawnObjectId;
@@ -57,9 +57,8 @@ public class SimMonitor {
     public SimMonitor() {
         randGenerator = new Random();
         constants = new Constants();
-
         lawnInfo = new Lawn(DEFAULT_WIDTH, DEFAULT_HEIGHT, constants.GRASS_CODE);
-        m_scanResult = new Integer[8];
+        m_scanResult = new int[8];
    
         m_numCrater = 0;
         m_turn = 0;
@@ -77,6 +76,8 @@ public class SimMonitor {
         SCAN_MAP.put(constants.PUPPY_EMPTY_CODE, "puppy_empty");
         SCAN_MAP.put(constants.PUPPY_GRASS_CODE, "puppy_grass");
         SCAN_MAP.put(constants.PUPPY_MOWER_CODE, "puppy_mower");
+        LawnmowerShared.grid_observed = null;
+        
         instance = this;
     }
 
@@ -236,37 +237,38 @@ public class SimMonitor {
 
     }
 
-    public void pollMowerForAction() {
-        
-    	//First check if all mowers are turned off or crashed , or reach max turn . End simulation
-    	++m_turn;
+    public void beforePollMowersForAction(){
+        ++m_turn;
         Boolean continueSimulation = false;
         for (int i=0; i < m_mowerState.length; ++i) {
-        	if(m_mowerState[i].getState() != constants.MOWER_OFF 
-        			|| m_mowerState[i].getState() != constants.MOWER_CRASHED){
-        		continueSimulation = true;
-        		break;
-        	}
+            if(m_mowerState[i].getState() != constants.MOWER_OFF || m_mowerState[i].getState() != constants.MOWER_CRASHED){
+                continueSimulation = true;
+                break;
+            }
         }
         if(m_turn == m_maxTurn)
         {
-        	continueSimulation = false;
+            continueSimulation = false;
         }
         if(!continueSimulation) {
-        	//TODO Steve : Stop simulation
-        	m_stopRun = true;
+            m_stopRun = true;
         }
+    }
+    
+    public void pollMowerForAction() {
         
-        //If not , continue simulations , poll each mower
+        beforePollMowersForAction();
+        
         for (int i=0; i < m_mowers.length; ++i) {
-        	
-        	boolean skipDisplay = false;
-        	if(m_mowerState[i].getState() == constants.MOWER_OFF 
-        			|| m_mowerState[i].getState() == constants.MOWER_CRASHED
-        		    || m_mowerState[i].getState() == constants.MOWER_STALLED){
-        		skipDisplay = true;
-        	}
-        	
+            boolean skipDisplay = false;
+            
+            if(m_mowerState[i].getState() == constants.MOWER_OFF 
+                || m_mowerState[i].getState() == constants.MOWER_CRASHED
+                    || m_mowerState[i].getState() == constants.MOWER_STALLED)
+            {
+                    skipDisplay = true;
+            }
+            
             singleMower(m_mowers[i], m_mowerState[i], i);
             
             if(!skipDisplay) {
@@ -275,11 +277,11 @@ public class SimMonitor {
         }
     }
 
-    private void singleMower(Mower mower, MowerState mowerState , int id) {
-    	System.out.println("singleMower");
+    public void singleMower(Mower mower, MowerState mowerState , int id) {
+        
     	//Mower already off or Crashed , Return
     	if(mowerState.getState() == constants.MOWER_OFF || mowerState.getState() == constants.MOWER_CRASHED){
-    		return;
+            return;
     	}
     	
     	//Mower Stalled , either from running into mower earlier or current with a puppy
@@ -317,7 +319,7 @@ public class SimMonitor {
             // select scanning as the action
             trackAction = "scan";
             //scanSurrounding(mowerState);
-            mower.provideScanResult(lawnInfo.getSurroundingSquares(mowerState.getX(), mowerState.getY()));
+            m_scanResult = lawnInfo.getSurroundingSquares(mowerState.getX(), mowerState.getY());
             trackScanResults = SCAN_MAP.get(m_scanResult[0]) + "," +
                     SCAN_MAP.get(m_scanResult[1]) + "," +
                     SCAN_MAP.get(m_scanResult[2]) + "," +
@@ -326,6 +328,10 @@ public class SimMonitor {
                     SCAN_MAP.get(m_scanResult[5]) + "," +
                     SCAN_MAP.get(m_scanResult[6]) + "," +
                     SCAN_MAP.get(m_scanResult[7]);
+            
+            mower.provideScanResult(m_scanResult);
+            
+//            System.out.println(trackScanResults);
             return;
         }
         else {
@@ -416,8 +422,6 @@ public class SimMonitor {
         } 
     }
 
-
-
     public void getPuppyAction() {
         for (int i=0; i < m_puppies.length; ++i) {
             singlePuppy(m_puppies[i], i);
@@ -426,7 +430,7 @@ public class SimMonitor {
     }
     
     public void singlePuppy(Puppy puppy, int id) {
-        System.out.println("singlePuppy");
+//        System.out.println("singlePuppy");
     	trackLawnObject = "puppy";
     	trackLawnObjectId = id + 1;  //display ID starts at 1
     	trackMoveResult = "ok";
@@ -512,6 +516,57 @@ public class SimMonitor {
     	}
     }
 
+    public String displayActionAndResponses_UI() {
+        
+    	StringBuilder sb = new StringBuilder();
+        sb.append("<table class='singleLog'>");
+        sb.append("<tr><td class='name'>");
+    	if(trackLawnObject.equals("mower")) {
+            sb.append("Mower " + trackLawnObjectId);
+            sb.append("</td><td>");
+            if (trackAction.equals("turn_off")) {
+                sb.append(trackAction + "<br>" + trackMoveResult);
+            } 
+            else if (trackAction.equals("scan")) {
+            	sb.append(trackAction + "<br>" + trackScanResults);
+            } 
+            else if (trackAction.equals("move")) {
+            	
+            	if(trackMoveResult.equals("ok") || trackMoveResult.equals("crash")) {
+            		sb.append(trackAction + "," + trackMoveDistance+ "," + trackNewDirection + "<br>");
+            		sb.append(trackMoveResult);
+            	}
+            	else if(trackMoveResult.equals("stalled")) {
+            		sb.append(trackAction + "," + trackMoveDistance+ "," + trackNewDirection + "<br>");
+            		sb.append(trackMoveResult + "," + trackActualMovedStep);
+            	}
+            } 
+            else {
+                sb.append("action not recognized");
+            }   		
+    	}
+
+    	if(trackLawnObject.equals("puppy")) {
+            sb.append("Puppy " + trackLawnObjectId);
+            sb.append("</td><td>");
+            if (trackAction.equals("stay")) {
+                sb.append(trackAction + "<br>" + trackMoveResult);
+            } 
+            else if (trackAction.equals("move")) {
+
+            	sb.append(trackAction + "," + trackNewX + "," + trackNewY + "<br>");
+            	sb.append(trackMoveResult);
+
+            } 
+            else {
+                sb.append("action not recognized");
+            }   		
+    	}
+        sb.append("</td></tr>");
+        sb.append("</table>");
+        return sb.toString();
+    }
+    
     public void displayActionAndResponses() {
     	
     	if(trackLawnObject.equals("mower")) {
@@ -528,12 +583,12 @@ public class SimMonitor {
             else if (trackAction.equals("move")) {
             	
             	if(trackMoveResult.equals("ok") || trackMoveResult.equals("crash")) {
-            		System.out.println(trackAction + "," + trackMoveDistance+ "," + trackNewDirection);
-            		System.out.println(trackMoveResult);
+                    System.out.println(trackAction + "," + trackMoveDistance+ "," + trackNewDirection);
+                    System.out.println(trackMoveResult);
             	}
             	else if(trackMoveResult.equals("stalled")) {
-            		System.out.println(trackAction + "," + trackMoveDistance+ "," + trackNewDirection);
-            		System.out.println(trackMoveResult + "," + trackActualMovedStep);
+                    System.out.println(trackAction + "," + trackMoveDistance+ "," + trackNewDirection);
+                    System.out.println(trackMoveResult + "," + trackActualMovedStep);
             	}
             } 
             else {
@@ -560,15 +615,15 @@ public class SimMonitor {
     	}
     }
     
-    public void printFinalReport(){
+    public String printFinalReport(){
         int total = 0;
             for (int i = 0; i < lawnInfo.getWidth(); i++) {
                 for (int j = 0; j < lawnInfo.getHeight(); j++) {
                     int curSquare = lawnInfo.getSquareType(i,j);
                     if(curSquare == constants.EMPTY_CODE
-                    		|| curSquare == constants.PUPPY_EMPTY_CODE
-                    		|| curSquare == constants.PUPPY_MOWER_CODE
-                    		|| curSquare == constants.MOWER_CODE)
+                        || curSquare == constants.PUPPY_EMPTY_CODE
+                        || curSquare == constants.PUPPY_MOWER_CODE
+                        || curSquare == constants.MOWER_CODE)
                     {
                         total++;
                     }
@@ -576,7 +631,7 @@ public class SimMonitor {
             }
         int lawnSize = lawnInfo.getWidth() * lawnInfo.getHeight();
         int numGrass = lawnSize - m_numCrater;
-        System.out.println(lawnSize + "," + numGrass + "," + total + "," + m_turn);
+        return lawnSize + "," + numGrass + "," + total + "," + m_turn;
     }
 
     public void renderLawn() {
@@ -584,9 +639,49 @@ public class SimMonitor {
     }
     
     public String renderLawnForUI() {
-        return lawnInfo.renderLawnForUI();
+        return buildHTML(lawnInfo.renderLawnForUI());
     }
 
+    public String buildHTML(String lawn){
+            
+        StringBuilder sb = new StringBuilder();
+        sb.append("<table>");
+        String[] lines = lawn.split("\n");
+
+        for(String line:lines){
+            sb.append("<tr>");
+            String[] spots = line.split("\\|");
+            for(String spot:spots){
+                if(spot.equals(""))
+                    continue;
+                sb.append("<td>");
+                String img = "<img src=\"";
+                if(spot.equals("  ")){
+                    img += "image/cut.png";
+                }else if(spot.equals(" g")){
+                    img += "image/grass.png";
+                }else if(spot.equals(" c")){
+                    img += "image/crater.png";
+                }else if(spot.equals(" m")){
+                    img += "image/mower.png";
+                }else if(spot.equals("p ")){
+                    img += "image/cut_puppy.png";
+                }else if(spot.equals("pm")){
+                    img += "image/mower_puppy.png";
+                }else if(spot.equals("pg")){
+                    img += "image/grass_puppy.png";
+                }
+                img += "\" class=\"spot\" />";
+                sb.append(img);
+                sb.append("</td>");
+            }
+            sb.append("</tr>");
+        }
+        sb.append("</table>");
+        return sb.toString();
+    }
+
+    
     public Integer getMaxTurn() {
         return m_maxTurn;
     }
@@ -594,6 +689,18 @@ public class SimMonitor {
     //TODO: Implement Stop run
     public boolean stopRun() {
         return m_stopRun;
+    }
+    
+    public Mower[] getMowers(){
+        return m_mowers;
+    }
+    
+    public Puppy[] getPuppies(){
+        return m_puppies;
+    }
+
+    public MowerState[] getMowerStates(){
+        return m_mowerState;
     }
 
 }

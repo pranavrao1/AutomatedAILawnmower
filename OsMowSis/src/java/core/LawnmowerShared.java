@@ -1,7 +1,7 @@
 package core;
 
 public abstract class LawnmowerShared {
-    public static Lawn grid_observed;
+    public static Lawn grid_observed = null;
     public static int knownHeight = 1;
     public static int knownWidth = 1;
     public Constants c = new Constants();

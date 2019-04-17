@@ -25,6 +25,7 @@ public class Mower extends LawnmowerShared {
     mowerAction = "move";
     trackMoveDistance = 0;
     trackNewDirection = dir;
+    
     if(grid_observed == null){
       grid_observed = new Lawn(c.DEFAULT_WIDTH + 2,c.DEFAULT_HEIGHT + 2, c.UNKNOWN_CODE);
     }
@@ -35,7 +36,7 @@ public class Mower extends LawnmowerShared {
     grid_observed.updateGrid(mowerX, mowerY, c.MOWER_CODE);
     grid_observed.renderLawn();
   }
-
+  
   private boolean nearbysquare(int x, int y, int code){
     int [] local_map_scan = grid_observed.getSurroundingSquares(x, y);
     for (int i : local_map_scan)
@@ -89,7 +90,7 @@ public class Mower extends LawnmowerShared {
               (mowerY+max_move*yOrientation) < 0 || (mowerY+max_move*yOrientation) >= grid_observed.getHeight())
         break;
       int value = knowledgeMap[mowerX+max_move*xOrientation][mowerY+max_move*yOrientation];
-      System.out.println("Current direction: " + direction + ", value: "+c.SQUARES[value]+", move: "+(max_move - 1));
+//      System.out.println("Current direction: " + direction + ", value: "+c.SQUARES[value]+", move: "+(max_move - 1));
       if(value == c.CRATER_CODE || value == c.FENCE_CODE || value == c.UNKNOWN_CODE || value == c.MOWER_CODE || value == c.PUPPY_MOWER_CODE) {
         break;
       }
@@ -123,7 +124,7 @@ public class Mower extends LawnmowerShared {
         posy1 = lmowerY + c.yDIR_MAP.get(c.DIRECTIONS[i]);
         if ((posx) < 0 || (posx) >= grid_observed.getWidth() || (posy) < 0 || (posy) >= grid_observed.getHeight())
           continue;
-        System.out.println("posx: "+posx+" posy: "+posy);
+//        System.out.println("posx: "+posx+" posy: "+posy);
         if ((knowledgeMap[posx][posy] == c.UNKNOWN_CODE || knowledgeMap[posx][posy] == c.GRASS_CODE) & knowledgeMap[posx1][posy1] == c.EMPTY_CODE){
           select[point] = i;
           point++;
@@ -193,6 +194,6 @@ public class Mower extends LawnmowerShared {
         knownWidth = x_axis + 1;
       grid_observed.updateGrid(x_axis, y_axis, values[i]);
     }
-    grid_observed.renderLawn();
+//    grid_observed.renderLawn();
   }
 }
