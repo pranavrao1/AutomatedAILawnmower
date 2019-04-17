@@ -6,7 +6,7 @@ public abstract class LawnmowerShared {
     public static int knownWidth = 1;
     public Constants c = new Constants();
 
-    private boolean fencesFound(int knownBaseX, int knownBaseY){
+    private boolean fencesFound(){
         int [][] knowledgeMap = grid_observed.getGrid();
         //check columns
         for(int j =0; j< knownHeight; j++){
