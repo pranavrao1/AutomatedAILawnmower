@@ -29,7 +29,8 @@ public abstract class LawnmowerShared {
         // check if all the blocks inside are empty
         for(int j =1; j< knownWidth-1; j++){
             for(int i =1; i< knownHeight-1; i++){
-                if (!(knowledgeMap[knownBaseX+j][knownBaseY+i] == c.EMPTY_CODE || knowledgeMap[knownBaseX+j][knownBaseY+i] == c.CRATER_CODE)){
+                int squareType = knowledgeMap[knownBaseX+j][knownBaseY+i];
+                if (squareType == c.GRASS_CODE || squareType == c.PUPPY_GRASS_CODE || squareType == c.UNKNOWN_CODE){
                     return false;
                 }
             }
