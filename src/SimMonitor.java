@@ -156,7 +156,7 @@ public class SimMonitor {
         Boolean continueSimulation = false;
         for (int i=0; i < m_mowerState.length; ++i) {
         	if(m_mowerState[i].getState() != constants.MOWER_OFF 
-        			|| m_mowerState[i].getState() != constants.MOWER_CRASHED){
+        			&& m_mowerState[i].getState() != constants.MOWER_CRASHED){
         		continueSimulation = true;
         		break;
         	}
@@ -224,6 +224,7 @@ public class SimMonitor {
             trackAction = "turn_off";
             mowerState.setState(constants.MOWER_OFF);
             trackMoveResult = "ok";
+            mower.finishMove(new Move(mowerState.getDirection(), 0), mowerState.getState(), 0);
             return;
         }
         else if (trackAction.equals("scan") ){
