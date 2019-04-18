@@ -7,6 +7,8 @@ package core;
 import java.util.Scanner;
 import java.util.HashMap;
 import java.util.Random;
+import java.util.ArrayList;
+import java.util.List;
 import java.io.*;
 /**
  *
@@ -448,80 +450,87 @@ public class SimMonitor {
     		return;
     	}
     	
-    	Boolean found = false;    	
-    	for(int k = 0; k < 8; ++k){
-    		
-	    	//Integer move = puppy.getMove();
-	    	String dir = constants.DIRECTIONS[k];
-	    	
-	        int xOrientation = constants.xDIR_MAP.get(dir);
-	        int yOrientation = constants.yDIR_MAP.get(dir);
-	        int oldX = puppy.getX();     //original X
-	        int oldY = puppy.getY();     //original Y
-	        int newX = oldX + 1 * xOrientation;
-	        int newY = oldY + 1 * yOrientation;
-	        if (newX <0 || newX >= lawnInfo.getWidth() || newY < 0 || newY >= lawnInfo.getHeight())
+        List<Integer> availDir = new ArrayList<Integer>();
+        int oldX = puppy.getX();     //original X
+	int oldY = puppy.getY();     //original Y
+        for(int j = 0; j < 8; ++j){ 
+            
+            String dir = constants.DIRECTIONS[j];
+            int xOrientation = constants.xDIR_MAP.get(dir);
+	    int yOrientation = constants.yDIR_MAP.get(dir);
+            int newX = oldX + 1 * xOrientation;
+	    int newY = oldY + 1 * yOrientation;
+            
+            if (newX <0 || newX >= lawnInfo.getWidth() || newY < 0 || newY >= lawnInfo.getHeight())
 	            continue;
-	        int newSquareType = lawnInfo.getSquareType(newX, newY);
-            int oldSquareType = lawnInfo.getSquareType(oldX, oldY);
-	        
-	        if ((newX >= 0 & newX < lawnInfo.getWidth() & newY >= 0 & newY < lawnInfo.getHeight())
+            int newSquareType = lawnInfo.getSquareType(newX, newY);
+            if ((newX >= 0 & newX < lawnInfo.getWidth() & newY >= 0 & newY < lawnInfo.getHeight())
                     && (newSquareType != constants.CRATER_CODE)
                     && (newSquareType != constants.PUPPY_MOWER_CODE)
                     && (newSquareType != constants.PUPPY_GRASS_CODE)
                     && (newSquareType != constants.PUPPY_EMPTY_CODE)) {
-	        	
-	        	found = true;
-
-	        	if(newSquareType == constants.EMPTY_CODE) {
-	        	    lawnInfo.updateGrid(newX, newY, constants.PUPPY_EMPTY_CODE);
-	        	}
-	        	if(newSquareType == constants.GRASS_CODE) {
-                    lawnInfo.updateGrid(newX, newY, constants.PUPPY_GRASS_CODE);
-	        	}
-	        	if(newSquareType == constants.MOWER_CODE) {
-                    lawnInfo.updateGrid(newX, newY, constants.PUPPY_MOWER_CODE);
-	        		for(int i = 0; i < m_mowerState.length; i++) {
-	        			if(m_mowerState[i].getX() == newX && m_mowerState[i].getY() == newY) {
-	        				m_mowerState[i].setState(constants.MOWER_STALLED);
-	        				break;
-	        			}
-	        		}
-	        	}
-	        	
-	        	puppy.setX(newX);
-	        	puppy.setY(newY);
-	        	trackAction = "move";
-	        	trackNewX = newX;
-	        	trackNewY = newY;
-	        	
-	        	if(oldSquareType == constants.PUPPY_EMPTY_CODE) {
-                    lawnInfo.updateGrid(oldX, oldY, constants.EMPTY_CODE);
-	        	}
-	        	if(oldSquareType == constants.PUPPY_GRASS_CODE) {
-                    lawnInfo.updateGrid(oldX, oldY, constants.GRASS_CODE);
-	        	}
-	        	if(oldSquareType == constants.PUPPY_MOWER_CODE) {
-                    lawnInfo.updateGrid(oldX, oldY, constants.MOWER_CODE);
-	        		for(int i = 0; i < m_mowerState.length; i++) {
-	        			if(m_mowerState[i].getX() == newX && m_mowerState[i].getY() == newY) {
-	        				if(m_mowerState[i].getStallTurn() == 0) {
-	        					m_mowerState[i].setState(constants.MOWER_ACTIVE);
-	        					break;
-	        				}
-	        			}
-	        		}
-	        	}
-	        }
-	        if(found) {
+                
+                availDir.add(j);
+            }
+        }
+        
+        int availSize = availDir.size();
+        if(availSize > 0){
+            Integer moveRandomChoice = randGenerator.nextInt(availSize-1);
+            String dir = constants.DIRECTIONS[availDir.get(moveRandomChoice)];
+            
+            int xOrientation = constants.xDIR_MAP.get(dir);
+	    int yOrientation = constants.yDIR_MAP.get(dir);
+            int newX = oldX + 1 * xOrientation;
+	    int newY = oldY + 1 * yOrientation;
+            int newSquareType = lawnInfo.getSquareType(newX, newY);
+            int oldSquareType = lawnInfo.getSquareType(oldX, oldY);
+            
+            if(newSquareType == constants.EMPTY_CODE) {
+	        lawnInfo.updateGrid(newX, newY, constants.PUPPY_EMPTY_CODE);
+	    }
+	    if(newSquareType == constants.GRASS_CODE) {
+                lawnInfo.updateGrid(newX, newY, constants.PUPPY_GRASS_CODE);
+	    }
+	    if(newSquareType == constants.MOWER_CODE) {
+                lawnInfo.updateGrid(newX, newY, constants.PUPPY_MOWER_CODE);
+	        for(int i = 0; i < m_mowerState.length; i++) {
+	            if(m_mowerState[i].getX() == newX && m_mowerState[i].getY() == newY) {
+	        	m_mowerState[i].setState(constants.MOWER_STALLED);
 	        	break;
+	            }
 	        }
-    	}
-    	
-    	//cannot found a valid move, therefore stay 
-    	if(!found) {
-    		trackAction = "stay";
-    	}
+	    }
+	        	
+	    puppy.setX(newX);
+	    puppy.setY(newY);
+	    trackAction = "move";
+	    trackNewX = newX;
+	    trackNewY = newY;
+	        	
+	    if(oldSquareType == constants.PUPPY_EMPTY_CODE) {
+                lawnInfo.updateGrid(oldX, oldY, constants.EMPTY_CODE);
+	    }
+	    if(oldSquareType == constants.PUPPY_GRASS_CODE) {
+                lawnInfo.updateGrid(oldX, oldY, constants.GRASS_CODE);
+	    }
+	    if(oldSquareType == constants.PUPPY_MOWER_CODE) {
+                lawnInfo.updateGrid(oldX, oldY, constants.MOWER_CODE);
+	        for(int i = 0; i < m_mowerState.length; i++) {
+                    if(m_mowerState[i].getX() == newX && m_mowerState[i].getY() == newY) {
+	        	if(m_mowerState[i].getStallTurn() == 0) {
+                            m_mowerState[i].setState(constants.MOWER_ACTIVE);
+                            break;
+	        	}
+                    }
+	        }
+	    }
+        }
+        else{
+            //cannot find a valid move, therefore stay
+            trackAction = "stay";
+        }
+        
     }
 
     public String displayActionAndResponses_UI() {
