@@ -38,12 +38,31 @@ and open the template in the editor.
     margin-bottom: 5px;
 }
 .logDiv{
-    max-height: 700px;
+    max-height: 630px;
     overflow: scroll;
     width: 450px;
-    height: 700px;
+    height: 630px;
 }
 .bigBtn{
-    width: 200px;
-    height: 50px;
+    width: 150px;
+    height: 40px;
+}
+.status{
+    height: 100%;
+    width: 100%;
+    text-align: center;
+}
+.turnLog{
+    margin-bottom: 2px;
+    background-color: Green;
+    opacity: 0.7;
+    width:100%;
+    font-weight: bolder;
+}
+.finishedLog{
+    margin-bottom: 2px;
+    background-color: red;
+    opacity: 0.7;
+    width:100%;
+    font-weight: bolder;
 }

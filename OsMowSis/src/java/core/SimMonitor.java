@@ -10,6 +10,8 @@ import java.util.Random;
 import java.util.ArrayList;
 import java.util.List;
 import java.io.*;
+import java.text.DecimalFormat;
+
 /**
  *
  * @author oscar
@@ -50,6 +52,8 @@ public class SimMonitor {
     private boolean m_stopRun;
     
     public int indexForNextBtn = 0;
+    private StringBuilder log;
+
 
     public static synchronized SimMonitor getInstance(){
         if(instance == null){
@@ -82,6 +86,7 @@ public class SimMonitor {
         SCAN_MAP.put(constants.PUPPY_MOWER_CODE, "puppy_mower");
         LawnmowerShared.grid_observed = null;
         indexForNextBtn = 0;
+        log = new StringBuilder();
         instance = this;
     }
 
@@ -535,6 +540,8 @@ public class SimMonitor {
 
     public String displayActionAndResponses_UI() {
         
+        displayActionAndResponses();
+
     	StringBuilder sb = new StringBuilder();
         sb.append("<table class='singleLog'>");
         sb.append("<tr><td class='name'>");
@@ -587,25 +594,25 @@ public class SimMonitor {
     public void displayActionAndResponses() {
     	
     	if(trackLawnObject.equals("mower")) {
-    		System.out.println("mower" + ","  + trackLawnObjectId);
+            log.append("mower" + ","  + trackLawnObjectId+'\n');
     		
             if (trackAction.equals("turn_off")) {
-                System.out.println(trackAction);
-                System.out.println(trackMoveResult);
+                log.append(trackAction+'\n');
+                log.append(trackMoveResult+'\n');
             } 
             else if (trackAction.equals("scan")) {
-            	System.out.println(trackAction);
-                System.out.println(trackScanResults);
+            	log.append(trackAction+'\n');
+                log.append(trackScanResults+'\n');
             } 
             else if (trackAction.equals("move")) {
             	
             	if(trackMoveResult.equals("ok") || trackMoveResult.equals("crash")) {
-                    System.out.println(trackAction + "," + trackMoveDistance+ "," + trackNewDirection);
-                    System.out.println(trackMoveResult);
+                    log.append(trackAction + "," + trackMoveDistance+ "," + trackNewDirection+'\n');
+                    log.append(trackMoveResult+'\n');
             	}
             	else if(trackMoveResult.equals("stalled")) {
-                    System.out.println(trackAction + "," + trackMoveDistance+ "," + trackNewDirection);
-                    System.out.println(trackMoveResult + "," + trackActualMovedStep);
+                    log.append(trackAction + "," + trackMoveDistance+ "," + trackNewDirection+'\n');
+                    log.append(trackMoveResult + "," + trackActualMovedStep+'\n');
             	}
             } 
             else {
@@ -614,16 +621,16 @@ public class SimMonitor {
     	}
 
     	if(trackLawnObject.equals("puppy")) {
-    		System.out.println("puppy" + ","  + trackLawnObjectId);
+    		log.append("puppy" + ","  + trackLawnObjectId+'\n');
     		
             if (trackAction.equals("stay")) {
-                System.out.println(trackAction);
-                System.out.println(trackMoveResult);
+                log.append(trackAction+'\n');
+                log.append(trackMoveResult+'\n');
             } 
             else if (trackAction.equals("move")) {
 
-            	System.out.println(trackAction + "," + trackNewX + "," + trackNewY);
-            	System.out.println(trackMoveResult);
+            	log.append(trackAction + "," + trackNewX + "," + trackNewY+'\n');
+            	log.append(trackMoveResult+'\n');
 
             } 
             else {
@@ -632,7 +639,28 @@ public class SimMonitor {
     	}
     }
     
-    public String printFinalReport(){
+        public void printFinalReport(){
+        int total = 0;
+            for (int i = 0; i < lawnInfo.getWidth(); i++) {
+                for (int j = 0; j < lawnInfo.getHeight(); j++) {
+                    int curSquare = lawnInfo.getSquareType(i,j);
+                    if(curSquare == constants.EMPTY_CODE
+                        || curSquare == constants.PUPPY_EMPTY_CODE
+                        || curSquare == constants.PUPPY_MOWER_CODE
+                        || curSquare == constants.MOWER_CODE)
+                    {
+                        total++;
+                    }
+                }
+            }
+        int lawnSize = lawnInfo.getWidth() * lawnInfo.getHeight();
+        int numGrass = lawnSize - m_numCrater;
+        log.append(lawnSize + "," + numGrass + "," + total + "," + m_turn);
+    }
+    
+    public String printFinalReport_UI(){
+        printFinalReport();
+
         int total = 0;
             for (int i = 0; i < lawnInfo.getWidth(); i++) {
                 for (int j = 0; j < lawnInfo.getHeight(); j++) {
@@ -650,6 +678,39 @@ public class SimMonitor {
         int numGrass = lawnSize - m_numCrater;
         return lawnSize + "," + numGrass + "," + total + "," + m_turn;
     }
+    
+        public String getStatus_UI(){
+        int cut = 0;
+            for (int i = 0; i < lawnInfo.getWidth(); i++) {
+                for (int j = 0; j < lawnInfo.getHeight(); j++) {
+                    int curSquare = lawnInfo.getSquareType(i,j);
+                    if(curSquare == constants.EMPTY_CODE
+                        || curSquare == constants.PUPPY_EMPTY_CODE
+                        || curSquare == constants.PUPPY_MOWER_CODE
+                        || curSquare == constants.MOWER_CODE)
+                    {
+                        cut++;
+                    }
+                }
+            }
+        int lawnSize = lawnInfo.getWidth() * lawnInfo.getHeight();
+        int numGrass = lawnSize - m_numCrater;
+        
+        DecimalFormat df = new DecimalFormat("#.##");
+        double percentage = (double)cut/numGrass;
+        percentage *= 100;
+        int remain = numGrass-cut;
+        
+        String html = "<table class='status'><tr bgcolor=\"#eeeeee\"><td>Turn(s)</td><td>Cut</td><td>Grass Remaining</td><td>Percent Done(%)</td></tr><tr><td>#";
+        html += m_turn +"</td><td>" + cut +"</td><td>" + remain +"</td><td>" + df.format(percentage) +" %</td></tr></table>";
+        
+        return html;
+    }
+
+    public String getLog(){
+        return log.toString();
+    }
+    
 
     public void renderLawn() {
         lawnInfo.renderLawn();
