@@ -21,7 +21,7 @@
         $(document).ready(function() {
             $('#play').click(function (e){
                 e.preventDefault();
-                play = setInterval(function () {document.getElementById("next").click();}, 200);
+                play = setInterval(function () {document.getElementById("next").click();}, 1000);
                 document.getElementById("play").style.display = "none";
                 document.getElementById("stop").style.display = "inline-block";
                 document.getElementById("next").style.display = "none";

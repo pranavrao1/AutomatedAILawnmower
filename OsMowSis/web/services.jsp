@@ -52,12 +52,11 @@
                     monitor.singleMower(mowers[curr], mowerStates[curr], curr);
 
                     if(!skipDisplay) {
-                        String log = monitor.displayActionAndResponses_UI();
+                        String log = monitor.displayActionAndResponses_UI(mowerStates[curr].getX(),mowerStates[curr].getY());
                         single.put("log", turnHTML+log);
                         String html = monitor.renderLawnForUI();
                         single.put("html", html);
                     }else{
-                        String log = monitor.displayActionAndResponses_UI();
                         single.put("log", turnHTML);
                         String html = monitor.renderLawnForUI();
                         single.put("html", html);
@@ -67,7 +66,7 @@
                     curr -= mowers.length;
 
                     monitor.singlePuppy(puppies[curr], curr);
-                    String log = monitor.displayActionAndResponses_UI();
+                    String log = monitor.displayActionAndResponses_UI(puppies[curr].getX(),puppies[curr].getY());
                     single.put("log", turnHTML+log);
                     String html = monitor.renderLawnForUI();
                     single.put("html", html);
