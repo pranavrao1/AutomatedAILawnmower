@@ -7,6 +7,16 @@
 </head>
 <script src="jQuery.js"></script>
 <script>
+    $(document).ready(function() {
+        $('#csvfile').change(function(){
+            if($('input[type=file]').val()==''){
+                $('submit').attr('disabled',true)
+            } 
+            else{
+              $('#submit').attr('disabled',false);
+            }
+        });
+    });
         var play = null;
         $(document).ready(function() {
             $('#play').click(function (e){
@@ -107,6 +117,7 @@
                 $("#log").empty();
                 $("#lawnMap").empty();
                 $("#lawnMap").append(resp);
+                document.getElementById("stop").click();
                 document.getElementById("play").removeAttribute('disabled');
                 document.getElementById("next").removeAttribute('disabled');
                 document.getElementById("stop").removeAttribute('disabled');
@@ -128,7 +139,7 @@
     <td>
         <form enctype="multipart/form-data" action="" method="post" name="csv" id="csv" style="margin: 0; margin-left: 20px; margin-top: 20px; height:30px;"> 
               <input class="borderline" type="file" name="csvfile" id="csvfile" value="" class="" style="width: 500px;"/>
-              <input type="submit" name="uploadCSV" id="upload" value="Upload" class="btn btn-primary pull-right"/>
+              <input type="submit" name="uploadCSV" id="submit" value="Upload" class="btn btn-primary pull-right" disabled="true"/>
         </form>
     </td>
     <td>
@@ -153,7 +164,7 @@
             <tr>
                 <td>
                     <form ENCTYPE="plain/text" action="" style="margin: 0 auto; display: table;">
-                        <button class="bigBtn" type="submit" id="play" disabled="true">Play</button>
+                        <button class="bigBtn" type="submit" id="play" disabled="true">Fast Forward</button>
                         <button class="bigBtn" type="submit" id="stop" style="display: none;" disabled="true">Stop</button>
                         <button class="bigBtn" type="submit" id="next" disabled="true" style="margin-left: 10px;">Next</button>
                     </form>

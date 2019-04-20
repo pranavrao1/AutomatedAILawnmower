@@ -56,6 +56,11 @@
                         single.put("log", turnHTML+log);
                         String html = monitor.renderLawnForUI();
                         single.put("html", html);
+                    }else{
+                        String log = monitor.displayActionAndResponses_UI();
+                        single.put("log", turnHTML);
+                        String html = monitor.renderLawnForUI();
+                        single.put("html", html);
                     }
                 }else{
 

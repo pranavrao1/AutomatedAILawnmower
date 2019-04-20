@@ -481,7 +481,7 @@ public class SimMonitor {
         
         int availSize = availDir.size();
         if(availSize > 0){
-            Integer moveRandomChoice = randGenerator.nextInt(availSize-1);
+            Integer moveRandomChoice = randGenerator.nextInt(availSize);
             String dir = constants.DIRECTIONS[availDir.get(moveRandomChoice)];
             
             int xOrientation = constants.xDIR_MAP.get(dir);
@@ -516,10 +516,10 @@ public class SimMonitor {
 	    if(oldSquareType == constants.PUPPY_EMPTY_CODE) {
                 lawnInfo.updateGrid(oldX, oldY, constants.EMPTY_CODE);
 	    }
-	    if(oldSquareType == constants.PUPPY_GRASS_CODE) {
+            else if(oldSquareType == constants.PUPPY_GRASS_CODE) {
                 lawnInfo.updateGrid(oldX, oldY, constants.GRASS_CODE);
 	    }
-	    if(oldSquareType == constants.PUPPY_MOWER_CODE) {
+            else if(oldSquareType == constants.PUPPY_MOWER_CODE) {
                 lawnInfo.updateGrid(oldX, oldY, constants.MOWER_CODE);
 	        for(int i = 0; i < m_mowerState.length; i++) {
                     if(m_mowerState[i].getX() == newX && m_mowerState[i].getY() == newY) {
@@ -529,7 +529,9 @@ public class SimMonitor {
 	        	}
                     }
 	        }
-	    }
+	    }else{
+                System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"+ puppy.getX() + ", " + puppy.getY());
+            }
         }
         else{
             //cannot find a valid move, therefore stay
@@ -721,7 +723,7 @@ public class SimMonitor {
     }
 
     public String buildHTML(String lawn){
-            
+        int num_puppy = 0;
         StringBuilder sb = new StringBuilder();
         sb.append("<table>");
         String[] lines = lawn.split("\n");
@@ -744,16 +746,22 @@ public class SimMonitor {
                     img += "image/mower.png";
                 }else if(spot.equals("p ")){
                     img += "image/cut_puppy.png";
+                    num_puppy++;
                 }else if(spot.equals("pm")){
                     img += "image/mower_puppy.png";
+                    num_puppy++;
                 }else if(spot.equals("pg")){
                     img += "image/grass_puppy.png";
+                    num_puppy++;
                 }
                 img += "\" class=\"spot\" />";
                 sb.append(img);
                 sb.append("</td>");
             }
             sb.append("</tr>");
+//            if((num_puppy+1 )!= m_puppies.length){
+//                System.out.println("*****************************************");
+//            }
         }
         sb.append("</table>");
         return sb.toString();
