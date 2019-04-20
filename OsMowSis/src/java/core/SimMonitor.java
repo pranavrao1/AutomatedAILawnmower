@@ -50,6 +50,8 @@ public class SimMonitor {
     private Integer m_collisionDelay;
     private Integer m_stayPercent;
     private boolean m_stopRun;
+    private int m_lawnWidth;
+    private int m_lawnHeight;
     
     public int indexForNextBtn = 0;
     private StringBuilder log;
@@ -100,9 +102,9 @@ public class SimMonitor {
 
             // read in the lawn information
             tokens = takeCommand.nextLine().split(DELIMITER);
-            int m_lawnWidth = Integer.parseInt(tokens[0]);
+            m_lawnWidth = Integer.parseInt(tokens[0]);
             tokens = takeCommand.nextLine().split(DELIMITER);
-            int m_lawnHeight = Integer.parseInt(tokens[0]);
+            m_lawnHeight = Integer.parseInt(tokens[0]);
 
             lawnInfo = new Lawn(m_lawnWidth, m_lawnHeight, constants.GRASS_CODE);
 
@@ -183,9 +185,9 @@ public class SimMonitor {
 
             // read in the lawn information
             tokens = takeCommand.readLine().split(DELIMITER);
-            int m_lawnWidth = Integer.parseInt(tokens[0]);
+            m_lawnWidth = Integer.parseInt(tokens[0]);
             tokens = takeCommand.readLine().split(DELIMITER);
-            int m_lawnHeight = Integer.parseInt(tokens[0]);
+            m_lawnHeight = Integer.parseInt(tokens[0]);
 
             lawnInfo = new Lawn(m_lawnWidth, m_lawnHeight, constants.GRASS_CODE);
 
@@ -247,7 +249,7 @@ public class SimMonitor {
             e.printStackTrace();
             System.out.println("error");
         }
-        return renderLawnForUI();
+        return renderLawnForUI(-1,-1);
 
     }
 
@@ -530,7 +532,7 @@ public class SimMonitor {
                     }
 	        }
 	    }else{
-                System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"+ puppy.getX() + ", " + puppy.getY());
+                System.out.println("Error: "+ puppy.getX() + ", " + puppy.getY());
             }
         }
         else{
@@ -540,7 +542,7 @@ public class SimMonitor {
         
     }
 
-    public String displayActionAndResponses_UI() {
+    public String displayActionAndResponses_UI(int x, int y) {
         
         displayActionAndResponses();
 
@@ -548,7 +550,7 @@ public class SimMonitor {
         sb.append("<table class='singleLog'>");
         sb.append("<tr><td class='name'>");
     	if(trackLawnObject.equals("mower")) {
-            sb.append("Mower " + trackLawnObjectId);
+            sb.append("Mower #" + trackLawnObjectId +"\n" + "("+x+","+y+")");
             sb.append("</td><td>");
             if (trackAction.equals("turn_off")) {
                 sb.append(trackAction + "<br>" + trackMoveResult);
@@ -573,7 +575,7 @@ public class SimMonitor {
     	}
 
     	if(trackLawnObject.equals("puppy")) {
-            sb.append("Puppy " + trackLawnObjectId);
+            sb.append("Puppy #" + trackLawnObjectId+"\n" + "("+x+","+y+")");
             sb.append("</td><td>");
             if (trackAction.equals("stay")) {
                 sb.append(trackAction + "<br>" + trackMoveResult);
@@ -718,17 +720,19 @@ public class SimMonitor {
         lawnInfo.renderLawn();
     }
     
-    public String renderLawnForUI() {
-        return buildHTML(lawnInfo.renderLawnForUI());
+    public String renderLawnForUI(int x, int y) {
+        return buildHTML(lawnInfo.renderLawnForUI(), x, y);
     }
 
-    public String buildHTML(String lawn){
-        int num_puppy = 0;
+    public String buildHTML(String lawn,int x, int y){
+        int nowY = 0;
         StringBuilder sb = new StringBuilder();
         sb.append("<table>");
         String[] lines = lawn.split("\n");
 
         for(String line:lines){
+            int nowX = 0;
+            ++nowY;
             sb.append("<tr>");
             String[] spots = line.split("\\|");
             for(String spot:spots){
@@ -746,15 +750,17 @@ public class SimMonitor {
                     img += "image/mower.png";
                 }else if(spot.equals("p ")){
                     img += "image/cut_puppy.png";
-                    num_puppy++;
                 }else if(spot.equals("pm")){
                     img += "image/mower_puppy.png";
-                    num_puppy++;
                 }else if(spot.equals("pg")){
                     img += "image/grass_puppy.png";
-                    num_puppy++;
                 }
-                img += "\" class=\"spot\" />";
+                if(nowX++==x && (m_lawnHeight-nowY) ==y){
+                    
+                    img += "\" class=\"spot now\" />";
+                }else{
+                    img += "\" class=\"spot\" />";
+                }
                 sb.append(img);
                 sb.append("</td>");
             }

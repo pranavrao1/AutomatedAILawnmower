@@ -54,11 +54,11 @@
                     if(!skipDisplay) {
                         String log = monitor.displayActionAndResponses_UI(mowerStates[curr].getX(),mowerStates[curr].getY());
                         single.put("log", turnHTML+log);
-                        String html = monitor.renderLawnForUI();
+                        String html = monitor.renderLawnForUI(mowerStates[curr].getX(),mowerStates[curr].getY());
                         single.put("html", html);
                     }else{
                         single.put("log", turnHTML);
-                        String html = monitor.renderLawnForUI();
+                        String html = monitor.renderLawnForUI(mowerStates[curr].getX(),mowerStates[curr].getY());
                         single.put("html", html);
                     }
                 }else{
@@ -68,7 +68,7 @@
                     monitor.singlePuppy(puppies[curr], curr);
                     String log = monitor.displayActionAndResponses_UI(puppies[curr].getX(),puppies[curr].getY());
                     single.put("log", turnHTML+log);
-                    String html = monitor.renderLawnForUI();
+                    String html = monitor.renderLawnForUI(puppies[curr].getX(),puppies[curr].getY());
                     single.put("html", html);
                 }
                 single.put("status", monitor.getStatus_UI());

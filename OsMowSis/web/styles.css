@@ -66,3 +66,8 @@ and open the template in the editor.
     width:100%;
     font-weight: bolder;
 }
+.now{
+    border: 2px solid red;
+    width: 36px;
+    height: 36px;
+}
