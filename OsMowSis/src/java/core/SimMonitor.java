@@ -369,7 +369,7 @@ public class SimMonitor {
 
                             //Crash into another mower  or mower with puppy on top
                             if (curSquareType == constants.MOWER_CODE || curSquareType == constants.PUPPY_MOWER_CODE) {
-                                    trackMoveResult = "stalled";
+                                    trackMoveResult = "stall";
                                     trackActualMovedStep = i - 1;
                                 mowerState.setState(constants.MOWER_STALLED);
                                 mowerState.setStallTurn(m_collisionDelay);
