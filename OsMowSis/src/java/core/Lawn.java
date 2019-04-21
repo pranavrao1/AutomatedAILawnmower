@@ -5,8 +5,9 @@ public class Lawn {
     private int width;
     private int [][] grid;
     private Constants c = new Constants();
-
-    public Lawn(int w, int h, int square_type) {
+    private boolean debug_print = false;
+    
+    public Lawn(int w, int h, int square_type, boolean debug) {
         width = w;
         height = h;
         grid = new int[width][height];
@@ -16,6 +17,7 @@ public class Lawn {
                 grid[i][j] = square_type;
             }
         }
+        debug_print=false;
     }
 
     public int [][] getGrid() {
@@ -48,6 +50,8 @@ public class Lawn {
 
     public int updateGrid(int x, int y, int square_type) {
         int old_type = grid[x][y];
+        if (debug_print)
+            System.out.print("old_type: "+ c.SQUARES[old_type] +", new_type: " + c.SQUARES[square_type]);
         grid[x][y] = square_type;
         return old_type;
     }
@@ -115,75 +119,4 @@ public class Lawn {
         }
         return sb.toString();
     }
-    
-    
-//    private void renderHorizontalBar(int size) {
-//        System.out.print(" ");
-//        for (int k = 0; k < size; k++) {
-//            System.out.print("--");
-//        }
-//        System.out.println("");
-//    }
-    
-    public void renderLawn() {
-//        int i, j;
-//        int charWidth = 2 * width + 2;
-//
-//        // display the rows of the lawn from top to bottom
-//        for (j = height - 1; j >= 0; j--) {
-//            renderHorizontalBar(charWidth);
-//
-//            // display the Y-direction identifier
-//            System.out.print(String.format("%02d", j));
-//
-//            // display the contents of each square on this row
-//            for (i = 0; i < width; i++) {
-//                System.out.print("|");
-//
-//
-//                if(grid[i][j] == c.EMPTY_CODE) {
-//                    System.out.print("  ");
-//                }
-//                else if(grid[i][j] == c.GRASS_CODE) {
-//                    System.out.print(" g");
-//                }
-//                else if(grid[i][j] == c.CRATER_CODE) {
-//                    System.out.print(" c");
-//                }
-//                else if(grid[i][j] == c.MOWER_CODE) {
-//                    System.out.print(" m");
-//                }
-//                else if(grid[i][j] == c.PUPPY_EMPTY_CODE) {
-//                    System.out.print("p ");
-//                }
-//                else if(grid[i][j] == c.PUPPY_MOWER_CODE) {
-//                    System.out.print("pm");
-//                }
-//                else if(grid[i][j] == c.PUPPY_GRASS_CODE) {
-//                    System.out.print("pg");
-//                }
-//                else if(grid[i][j] == c.FENCE_CODE) {
-//                    System.out.print(" f");
-//                }
-//                else if(grid[i][j] == c.UNKNOWN_CODE) {
-//                    System.out.print("??");
-//                }
-//
-//            }
-//            System.out.println("|");
-//        }
-//        renderHorizontalBar(charWidth);
-//
-//        // display the column X-direction identifiers
-//        System.out.print(" ");
-//        for (i = 0; i < width; i++) {
-//            System.out.print("  " + i);
-//        }
-//        System.out.println("");
-//
-//        // display the mower's direction
-//        //System.out.println("dir: " + mowerDirection);
-//        System.out.println("");
-    }
-
 }

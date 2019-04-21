@@ -27,14 +27,13 @@ public class Mower extends LawnmowerShared {
     trackNewDirection = dir;
     
     if(grid_observed == null){
-      grid_observed = new Lawn(c.DEFAULT_WIDTH + 2,c.DEFAULT_HEIGHT + 2, c.UNKNOWN_CODE);
+      grid_observed = new Lawn(c.DEFAULT_WIDTH + 2,c.DEFAULT_HEIGHT + 2, c.UNKNOWN_CODE, false);
     }
     if (knownHeight <= mowerY)
       knownHeight = mowerY + 1;
     if (knownWidth <= mowerX)
       knownWidth = mowerX + 1;
     grid_observed.updateGrid(mowerX, mowerY, c.MOWER_CODE);
-    grid_observed.renderLawn();
   }
   
   private boolean nearbysquare(int x, int y, int code){
@@ -124,7 +123,6 @@ public class Mower extends LawnmowerShared {
         posy1 = lmowerY + c.yDIR_MAP.get(c.DIRECTIONS[i]);
         if ((posx) < 0 || (posx) >= grid_observed.getWidth() || (posy) < 0 || (posy) >= grid_observed.getHeight())
           continue;
-//        System.out.println("posx: "+posx+" posy: "+posy);
         if ((knowledgeMap[posx][posy] == c.UNKNOWN_CODE || knowledgeMap[posx][posy] == c.GRASS_CODE) & knowledgeMap[posx1][posy1] == c.EMPTY_CODE){
           select[point] = i;
           point++;
@@ -173,7 +171,6 @@ public class Mower extends LawnmowerShared {
     this.mowerY = y;
     if (m.getDirection() != "unknown")
       this.direction = m.getDirection();
-    grid_observed.renderLawn();
   }
 
   /**
@@ -194,6 +191,5 @@ public class Mower extends LawnmowerShared {
         knownWidth = x_axis + 1;
       grid_observed.updateGrid(x_axis, y_axis, values[i]);
     }
-//    grid_observed.renderLawn();
   }
 }

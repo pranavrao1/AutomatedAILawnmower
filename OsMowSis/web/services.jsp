@@ -23,7 +23,6 @@
                 out.flush();
             }else{
                 Mower[] mowers = monitor.getMowers();
-                MowerState[] mowerStates = monitor.getMowerStates();
                 Puppy[] puppies = monitor.getPuppies();
 
                 int index = monitor.indexForNextBtn;
@@ -39,7 +38,8 @@
                 JSONObject single = new JSONObject();
 
                 if(curr<mowers.length){
-
+                    
+                    MowerState[] mowerStates = monitor.getMowerStates();
                     boolean skipDisplay = false;
 
                     if(mowerStates[curr].getState() == constants.MOWER_OFF 
@@ -49,7 +49,7 @@
                             skipDisplay = true;
                     }
 
-                    monitor.singleMower(mowers[curr], mowerStates[curr], curr);
+                    monitor.singleMower(mowers[curr], curr);
 
                     if(!skipDisplay) {
                         String log = monitor.displayActionAndResponses_UI(mowerStates[curr].getX(),mowerStates[curr].getY());

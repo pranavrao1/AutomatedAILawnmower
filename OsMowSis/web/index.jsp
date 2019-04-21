@@ -21,12 +21,12 @@
         $(document).ready(function() {
             $('#play').click(function (e){
                 e.preventDefault();
-                var interval = document.getElementById("interval").value;
-                play = setInterval(function () {document.getElementById("next").click();}, interval);
+//                var interval = document.getElementById("interval").value;
+                play = setInterval(function () {document.getElementById("next").click();}, 1000);
                 document.getElementById("play").style.display = "none";
                 document.getElementById("stop").style.display = "inline-block";
                 document.getElementById("next").style.display = "none";
-                document.getElementById("intervalDiv").style.display = "none";
+//                document.getElementById("intervalDiv").style.display = "none";
                
             });
         });
@@ -37,7 +37,7 @@
                 document.getElementById("play").style.display = "inline-block";
                 document.getElementById("stop").style.display = "none";
                 document.getElementById("next").style.display = "inline-block";
-                document.getElementById("intervalDiv").style.display = "inline-block";
+//                document.getElementById("intervalDiv").style.display = "inline-block";
             });
         });
         $(document).ready(function() {
@@ -71,6 +71,7 @@
                     data: "action=next",
                     enctype: "text/plain",
                     error:function(){
+                        document.getElementById("stop").click();
                         alert("error occured!!!");
                     },
                     success: function(json){    
@@ -128,7 +129,7 @@
                 document.getElementById("play").style.display = "inline-block";
                 document.getElementById("stop").style.display = "none";
                 document.getElementById("next").style.display = "inline-block";
-                document.getElementById("intervalDiv").style.display = "inline-block";
+//                document.getElementById("intervalDiv").style.display = "inline-block";
             });  
         });
     });
@@ -138,7 +139,7 @@
 <tr style="height: 40px;">
     <td colspan="2">
         <div>
-            <img src="image/client-logo-gt.jpg" style="width: 80px;margin-top: -30px; margin-left: -20px;"> <span style="font-size: 22px;">CS6310 Group A6-60: OsMowSis</span><span style="font-size: 11px">ver_1.2</span>
+            <img src="image/client-logo-gt.jpg" style="width: 80px;margin-top: -30px; margin-left: -20px;"> <span style="font-size: 22px;">CS6310 Group A6-60: OsMowSis</span><span style="font-size: 11px">ver_1.3</span>
         </div>
     </td>
 </tr>
@@ -148,7 +149,7 @@
               <input class="borderline" type="file" name="csvfile" id="csvfile" value="" class="" style="width: 500px;" accept=".csv"/>
               <input type="submit" name="uploadCSV" id="submit" value="Upload" class="btn btn-primary pull-right" disabled="true"/>
         </form>
-        <div id="intervalDiv" style="margin-left:10px;margin-top: 10px;">Interval(ms): <input id="interval" type="number" min="100" value="500" style="width: 60px;"></div>
+        <!--<div id="intervalDiv" style="margin-left:10px;margin-top: 10px;">Interval(ms): <input id="interval" type="number" min="100" value="500" style="width: 60px;"></div>-->
     </td>
     <td>
         <span style="position: absolute;">Output:</span>

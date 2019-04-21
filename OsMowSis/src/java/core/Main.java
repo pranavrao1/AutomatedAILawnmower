@@ -3,9 +3,9 @@ package core;
 public class Main {
 
     public static void main(String[] args) {
-        SimMonitor monitor = new SimMonitor();
-        String path = "/Users/parby02/temp/scenario6.csv";
-        monitor.uploadStartingFile(path);
+//        SimMonitor monitor = new SimMonitor();
+//        String path = "/Users/parby02/temp/scenario6.csv";
+//        monitor.uploadStartingFile(path);
         // check for the test scenario file name
 //        if (args.length == 0) {
 //            System.out.println("ERROR: Test scenario file name not found.");
@@ -14,12 +14,12 @@ public class Main {
             //monitorSim.renderLawn();
 
             // run the simulation for a fixed number of steps
-            int turns = 0;
-            Integer maxTurn = monitor.getMaxTurn();
-            for(; turns < maxTurn & !monitor.stopRun(); turns++) {
-                monitor.pollMowerForAction();
+//            int turns = 0;
+//            Integer maxTurn = monitor.getMaxTurn();
+//            for(; turns < maxTurn & !monitor.stopRun(); turns++) {
+//                monitor.pollMowerForAction();
                 //monitor.validateMowerAction();
-                monitor.getPuppyAction();
+//                monitor.getPuppyAction();
                 
                 //monitor.displayActionAndResponses();
 
@@ -29,14 +29,15 @@ public class Main {
 
                 // pause after each event for a given number of seconds
                 // pausing is completely optional
-                try {
-                    Thread.sleep(0);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            //monitorSim.renderLawn();
-            monitor.printFinalReport();
-        }
+//                try {
+//                    Thread.sleep(0);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//            //monitorSim.renderLawn();
+//            monitor.printFinalReport();
+//        }
+    }
 }
 
