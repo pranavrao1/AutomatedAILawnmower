@@ -74,7 +74,7 @@ format:
 11. <the maximum number of turns for the simulation>
 
 # Documentation FIle:
-1. UML Class Diagram: 
+1. UML Class Diagram: https://www.lucidchart.com/invitations/accept/62a819c7-764c-4680-b07d-43e38f159136
 2. UML Deployment Diagram:
 3. Sequence, State Diagram:
 4. Use Case Diagram: https://www.lucidchart.com/invitations/accept/e41ef523-c645-491b-8a25-17743ed0da8c
