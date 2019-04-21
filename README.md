@@ -75,6 +75,7 @@ format:
 
 # Documentation FIle:
 1. UML Class Diagram: https://www.lucidchart.com/invitations/accept/62a819c7-764c-4680-b07d-43e38f159136
-2. UML Deployment Diagram:
-3. Sequence, State Diagram:
-4. Use Case Diagram: https://www.lucidchart.com/invitations/accept/e41ef523-c645-491b-8a25-17743ed0da8c
+2. UML Deployment Diagram: https://www.lucidchart.com/invitations/accept/cab69088-0a63-4bd8-9919-623c7e3771a7
+3. Sequence Diagram: https://www.lucidchart.com/invitations/accept/a5acdc2f-d1b6-47de-a799-9251c57e9c0e
+4. State Diagram:https://www.lucidchart.com/invitations/accept/07ed03de-39c3-4399-bfd0-0926c07c5ab8
+5. Use Case Diagram: https://www.lucidchart.com/invitations/accept/e41ef523-c645-491b-8a25-17743ed0da8c
