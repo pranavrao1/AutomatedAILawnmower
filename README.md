@@ -72,3 +72,9 @@ format:
 9. <the puppy “stay percentage”: the probability that a puppy stays at its current location>
 10. <the initial location of each puppy> [one line per puppy]
 11. <the maximum number of turns for the simulation>
+
+# Documentation FIle:
+1. UML Class Diagram: 
+2. UML Deployment Diagram:
+3. Sequence, State Diagram:
+4. Use Case Diagram: https://www.lucidchart.com/invitations/accept/e41ef523-c645-491b-8a25-17743ed0da8c
